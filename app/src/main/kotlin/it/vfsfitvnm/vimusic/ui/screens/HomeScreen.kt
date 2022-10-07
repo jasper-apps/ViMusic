@@ -232,7 +232,7 @@ fun HomeScreen() {
                     ) {
                         BasicText(
                             text = "Playlists",
-                            style = typography.m.semiBold,
+                            style = typography.xl.semiBold,
                             modifier = Modifier
                                 .padding(horizontal = 8.dp, vertical = 16.dp)
                         )
