@@ -27,7 +27,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.startForegroundService
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
-import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -83,7 +82,6 @@ import it.vfsfitvnm.vimusic.utils.shouldBePlaying
 import it.vfsfitvnm.vimusic.utils.skipSilenceKey
 import it.vfsfitvnm.vimusic.utils.timer
 import it.vfsfitvnm.vimusic.utils.volumeNormalizationKey
-import it.vfsfitvnm.youtubemusic.YouTube
 import it.vfsfitvnm.youtubemusic.models.NavigationEndpoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -598,64 +596,23 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
                     ringBuffer.getOrNull(0)?.first -> dataSpec.withUri(ringBuffer.getOrNull(0)!!.second)
                     ringBuffer.getOrNull(1)?.first -> dataSpec.withUri(ringBuffer.getOrNull(1)!!.second)
                     else -> {
-                        val urlResult = runBlocking(Dispatchers.IO) {
-                            YouTube.player(videoId)
-                        }?.mapCatching { body ->
-                            when (val status = body.playabilityStatus.status) {
-                                "OK" -> body.streamingData?.adaptiveFormats?.findLast { format ->
-                                    format.itag == 251 || format.itag == 140
-                                }?.let { format ->
-                                    val mediaItem = runBlocking(Dispatchers.Main) {
-                                        player.findNextMediaItemById(videoId)
-                                    }
+                        val mediaItem = runBlocking(Dispatchers.Main) {
+                            player.findNextMediaItemById(videoId)
 
-                                    mediaItem?.let {
-                                        it.mediaMetadata.extras?.putString(
-                                            "sourceUri",
-                                            format.url
-                                        )
-                                        Log.i(
-                                            "info23",
-                                            "sourceUri put for ${it.mediaId}: ${format.url}"
-                                        )
-                                    }
-
-                                    query {
-                                        mediaItem?.let(Database::insert)
-
-                                        Database.insert(
-                                            it.vfsfitvnm.vimusic.models.Format(
-                                                songId = videoId,
-                                                itag = format.itag,
-                                                mimeType = format.mimeType,
-                                                bitrate = format.bitrate,
-                                                loudnessDb = body.playerConfig?.audioConfig?.loudnessDb?.toFloat(),
-                                                contentLength = format.contentLength,
-                                                lastModified = format.lastModified
-                                            )
-                                        )
-                                    }
-
-                                    format.url
-                                } ?: throw PlayableFormatNotFoundException()
-                                "UNPLAYABLE" -> throw UnplayableException()
-                                "LOGIN_REQUIRED" -> throw LoginRequiredException()
-                                else -> throw PlaybackException(
-                                    status,
-                                    null,
-                                    PlaybackException.ERROR_CODE_REMOTE_ERROR
-                                )
-                            }
                         }
+                        val uriResult = mediaItem
+                            ?.let {
+                                BuildMediaUrl(mediaItem)
+                            }
 
-                        urlResult?.getOrThrow()?.let { url ->
-                            ringBuffer.append(videoId to url.toUri())
-                            dataSpec.withUri(url.toUri())
+                        uriResult?.getOrThrow()?.let { uri ->
+                            ringBuffer.append(videoId to uri)
+                            dataSpec.withUri(uri)
                                 .subrange(dataSpec.uriPositionOffset, chunkLength)
 
                         } ?: throw PlaybackException(
                             null,
-                            urlResult?.exceptionOrNull(),
+                            uriResult?.exceptionOrNull(),
                             PlaybackException.ERROR_CODE_REMOTE_ERROR
                         )
                     }

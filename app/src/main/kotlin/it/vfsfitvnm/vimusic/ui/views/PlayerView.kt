@@ -50,7 +50,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.DownloadService
@@ -58,6 +57,7 @@ import coil.compose.AsyncImage
 import it.vfsfitvnm.vimusic.LocalPlayerServiceBinder
 import it.vfsfitvnm.vimusic.R
 import it.vfsfitvnm.vimusic.download.MediaDownloadService
+import it.vfsfitvnm.vimusic.service.BuildMediaUrl
 import it.vfsfitvnm.vimusic.ui.components.BottomSheet
 import it.vfsfitvnm.vimusic.ui.components.BottomSheetState
 import it.vfsfitvnm.vimusic.ui.components.LocalMenuState
@@ -86,7 +86,6 @@ fun PlayerView(
     layoutState: BottomSheetState,
     modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val menuState = LocalMenuState.current
 
     val (colorPalette, typography, thumbnailShape) = LocalAppearance.current
@@ -363,28 +362,27 @@ fun PlayerView(
                                             )
                                         },
                                         onDownload = {
-                                            val uri = mediaItem.mediaMetadata
-                                                .extras
-                                                ?.getString("sourceUri")
-                                                ?.toUri()
+                                            val uri = BuildMediaUrl(mediaItem)
 
-                                            uri?.let {
-                                                val id = mediaItem.mediaId
-                                                val request = DownloadRequest
-                                                    .Builder(id, uri)
-                                                    .setCustomCacheKey(id)
-                                                    .build()
-                                                DownloadService.sendAddDownload(
-                                                    context,
-                                                    MediaDownloadService::class.java,
-                                                    request,
-                                                    true
-                                                )
-                                                Log.i(
-                                                    "info23",
-                                                    "request sent: ${mediaItem.mediaId} -> $uri"
-                                                )
-                                            }
+                                            uri
+                                                .getOrNull()
+                                                ?.let {
+                                                    val id = mediaItem.mediaId
+                                                    val request = DownloadRequest
+                                                        .Builder(id, it)
+                                                        .setCustomCacheKey(id)
+                                                        .build()
+                                                    DownloadService.sendAddDownload(
+                                                        context,
+                                                        MediaDownloadService::class.java,
+                                                        request,
+                                                        true
+                                                    )
+                                                    Log.i(
+                                                        "info23",
+                                                        "request sent: ${mediaItem.mediaId} -> $uri"
+                                                    )
+                                                }
                                         },
                                         onGoToEqualizer = {
                                             val intent =
