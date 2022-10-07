@@ -232,11 +232,12 @@ fun HomeScreen() {
                     Column(
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
+                            .fillParentMaxHeight()
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             BasicText(
                                 text = "Playlists",
@@ -245,9 +246,10 @@ fun HomeScreen() {
                                     .padding(horizontal = 8.dp, vertical = 16.dp)
                             )
                         }
-                        Spacer(modifier = Modifier.height(40.dp))
+                        Spacer(modifier = Modifier.height(35.dp))
                         Row(
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .zIndex(1f)
                                 .padding(horizontal = 8.dp)
                                 .padding(top = 16.dp)
@@ -261,12 +263,10 @@ fun HomeScreen() {
                                     .padding(all = 8.dp)
                                     .size(20.dp)
                             )
-
                             Box {
                                 var isSortMenuDisplayed by remember {
                                     mutableStateOf(false)
                                 }
-
                                 Image(
                                     painter = painterResource(R.drawable.sort),
                                     contentDescription = null,
@@ -327,8 +327,9 @@ fun HomeScreen() {
                                 }
                             }
                             Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.BottomEnd
+                                contentAlignment = Alignment.BottomEnd,
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.search),
@@ -341,66 +342,63 @@ fun HomeScreen() {
                                 )
                             }
                         }
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                        LazyVerticalGrid(
+                            state = lazyVerticalGridState,
+                            columns = GridCells.Fixed(3),
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            modifier = Modifier
+                                .animateContentSize()
+                                .fillMaxWidth()
+                                .height(124.dp * (if (playlistGridExpanded) 3 else 1))
                         ) {
-                            LazyVerticalGrid(
-                                state = lazyVerticalGridState,
-                                columns = GridCells.Fixed(3),
-                                contentPadding = PaddingValues(horizontal = 16.dp),
-                                modifier = Modifier
-                                    .animateContentSize()
-                                    .fillMaxWidth()
-                                    .height(124.dp * (if (playlistGridExpanded) 3 else 1))
-                            ) {
-                                items(
-                                    items = playlistItems,
-                                    key = { it.contentId },
-                                    contentType = { it }
-                                ) { item ->
-                                    when (item) {
-                                        is RealPlaylistItem -> PlaylistPreviewItem(
-                                            playlistPreview = item.playlistPreview,
-                                            modifier = Modifier
-                                                .animateItemPlacement()
-                                                .padding(all = 8.dp)
-                                                .clickable(
-                                                    indication = rememberRipple(bounded = true),
-                                                    interactionSource = remember { MutableInteractionSource() },
-                                                    onClick = { localPlaylistRoute(item.playlistPreview.playlist.id) }
-                                                )
-                                        )
-                                        FavoritePlaylistItem -> BuiltInPlaylistItem(
-                                            icon = R.drawable.heart,
-                                            colorTint = colorPalette.red,
-                                            name = item.title,
-                                            modifier = Modifier
-                                                .animateItemPlacement()
-                                                .padding(all = 8.dp)
-                                                .clickable(
-                                                    indication = rememberRipple(bounded = true),
-                                                    interactionSource = remember { MutableInteractionSource() },
-                                                    onClick = { builtInPlaylistRoute(BuiltInPlaylist.Favorites) }
-                                                )
-                                        )
-                                        OfflinePlaylistItem -> BuiltInPlaylistItem(
-                                            icon = R.drawable.airplane,
-                                            colorTint = colorPalette.blue,
-                                            name = item.title,
-                                            modifier = Modifier
-                                                .animateItemPlacement()
-                                                .padding(all = 8.dp)
-                                                .clickable(
-                                                    indication = rememberRipple(bounded = true),
-                                                    interactionSource = remember { MutableInteractionSource() },
-                                                    onClick = { builtInPlaylistRoute(BuiltInPlaylist.Offline) }
-                                                )
-                                        )
-                                    }
+                            items(
+                                items = playlistItems,
+                                key = { it.contentId },
+                                contentType = { it }
+                            ) { item ->
+                                when (item) {
+                                    is RealPlaylistItem -> PlaylistPreviewItem(
+                                        playlistPreview = item.playlistPreview,
+                                        modifier = Modifier
+                                            .animateItemPlacement()
+                                            .padding(all = 8.dp)
+                                            .clickable(
+                                                indication = rememberRipple(bounded = true),
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                onClick = { localPlaylistRoute(item.playlistPreview.playlist.id) }
+                                            )
+                                    )
+                                    FavoritePlaylistItem -> BuiltInPlaylistItem(
+                                        icon = R.drawable.heart,
+                                        colorTint = colorPalette.red,
+                                        name = item.title,
+                                        modifier = Modifier
+                                            .animateItemPlacement()
+                                            .padding(all = 8.dp)
+                                            .clickable(
+                                                indication = rememberRipple(bounded = true),
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                onClick = { builtInPlaylistRoute(BuiltInPlaylist.Favorites) }
+                                            )
+                                    )
+                                    OfflinePlaylistItem -> BuiltInPlaylistItem(
+                                        icon = R.drawable.airplane,
+                                        colorTint = colorPalette.blue,
+                                        name = item.title,
+                                        modifier = Modifier
+                                            .animateItemPlacement()
+                                            .padding(all = 8.dp)
+                                            .clickable(
+                                                indication = rememberRipple(bounded = true),
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                onClick = { builtInPlaylistRoute(BuiltInPlaylist.Offline) }
+                                            )
+                                    )
                                 }
                             }
                         }
                     }
+
                 }
             }
         }
