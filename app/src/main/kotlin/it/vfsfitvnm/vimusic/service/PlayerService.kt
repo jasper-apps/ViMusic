@@ -596,14 +596,13 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
                     ringBuffer.getOrNull(0)?.first -> dataSpec.withUri(ringBuffer.getOrNull(0)!!.second)
                     ringBuffer.getOrNull(1)?.first -> dataSpec.withUri(ringBuffer.getOrNull(1)!!.second)
                     else -> {
-                        val mediaItem = runBlocking(Dispatchers.Main) {
-                            player.findNextMediaItemById(videoId)
+                        val uriResult = runBlocking(Dispatchers.Main) {
+                            val mediaItem = player.findNextMediaItemById(videoId)
+                            mediaItem?.let {
+                                BuildMediaUrl(it)
+                            }
 
                         }
-                        val uriResult = mediaItem
-                            ?.let {
-                                BuildMediaUrl(mediaItem)
-                            }
 
                         uriResult?.getOrThrow()?.let { uri ->
                             ringBuffer.append(videoId to uri)

@@ -9,47 +9,44 @@ import it.vfsfitvnm.vimusic.Database
 import it.vfsfitvnm.vimusic.models.Format
 import it.vfsfitvnm.vimusic.query
 import it.vfsfitvnm.youtubemusic.YouTube
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 
-fun BuildMediaUrl(mediaItem: MediaItem): Result<Uri> {
+suspend fun BuildMediaUrl(mediaItem: MediaItem): Result<Uri> {
     Log.i("info27", "building media uri for ${mediaItem.mediaId}")
-    val urlResult = runBlocking(Dispatchers.IO) {
-        YouTube.player(mediaItem.mediaId)
-    }.mapCatching { body ->
-        when (val status = body.playabilityStatus.status) {
-            "OK" -> body.streamingData?.adaptiveFormats?.findLast { format ->
-                format.itag == 251 || format.itag == 140
-            }?.let { format ->
-                query {
-                    mediaItem.let(Database::insert)
+    val urlResult = YouTube.player(mediaItem.mediaId)
+        .mapCatching { body ->
+            when (val status = body.playabilityStatus.status) {
+                "OK" -> body.streamingData?.adaptiveFormats?.findLast { format ->
+                    format.itag == 251 || format.itag == 140
+                }?.let { format ->
+                    query {
+                        mediaItem.let(Database::insert)
 
-                    Database.insert(
-                        Format(
-                            songId = mediaItem.mediaId,
-                            itag = format.itag,
-                            mimeType = format.mimeType,
-                            bitrate = format.bitrate,
-                            loudnessDb = body.playerConfig?.audioConfig?.loudnessDb?.toFloat(),
-                            contentLength = format.contentLength,
-                            lastModified = format.lastModified
+                        Database.insert(
+                            Format(
+                                songId = mediaItem.mediaId,
+                                itag = format.itag,
+                                mimeType = format.mimeType,
+                                bitrate = format.bitrate,
+                                loudnessDb = body.playerConfig?.audioConfig?.loudnessDb?.toFloat(),
+                                contentLength = format.contentLength,
+                                lastModified = format.lastModified
+                            )
                         )
-                    )
-                }
+                    }
 
-                val uri = format.url?.toUri()
-                Log.i("info27", "uri for ${mediaItem.mediaId} built: $uri")
+                    val uri = format.url?.toUri()
+                    Log.i("info27", "uri for ${mediaItem.mediaId} built: $uri")
 
-                uri
-            } ?: throw PlayableFormatNotFoundException()
-            "UNPLAYABLE" -> throw UnplayableException()
-            "LOGIN_REQUIRED" -> throw LoginRequiredException()
-            else -> throw PlaybackException(
-                status,
-                null,
-                PlaybackException.ERROR_CODE_REMOTE_ERROR
-            )
+                    uri
+                } ?: throw PlayableFormatNotFoundException()
+                "UNPLAYABLE" -> throw UnplayableException()
+                "LOGIN_REQUIRED" -> throw LoginRequiredException()
+                else -> throw PlaybackException(
+                    status,
+                    null,
+                    PlaybackException.ERROR_CODE_REMOTE_ERROR
+                )
+            }
         }
-    }
     return urlResult
 }

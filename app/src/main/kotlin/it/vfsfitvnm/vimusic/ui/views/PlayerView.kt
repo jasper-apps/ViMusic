@@ -77,6 +77,7 @@ import it.vfsfitvnm.vimusic.utils.secondary
 import it.vfsfitvnm.vimusic.utils.semiBold
 import it.vfsfitvnm.vimusic.utils.thumbnail
 import it.vfsfitvnm.youtubemusic.models.NavigationEndpoint
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @ExperimentalFoundationApi
@@ -86,6 +87,7 @@ fun PlayerView(
     layoutState: BottomSheetState,
     modifier: Modifier = Modifier,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val menuState = LocalMenuState.current
 
     val (colorPalette, typography, thumbnailShape) = LocalAppearance.current
@@ -362,27 +364,29 @@ fun PlayerView(
                                             )
                                         },
                                         onDownload = {
-                                            val uri = BuildMediaUrl(mediaItem)
+                                            coroutineScope.launch {
+                                                val uri = BuildMediaUrl(mediaItem)
 
-                                            uri
-                                                .getOrNull()
-                                                ?.let {
-                                                    val id = mediaItem.mediaId
-                                                    val request = DownloadRequest
-                                                        .Builder(id, it)
-                                                        .setCustomCacheKey(id)
-                                                        .build()
-                                                    DownloadService.sendAddDownload(
-                                                        context,
-                                                        MediaDownloadService::class.java,
-                                                        request,
-                                                        true
-                                                    )
-                                                    Log.i(
-                                                        "info23",
-                                                        "request sent: ${mediaItem.mediaId} -> $uri"
-                                                    )
-                                                }
+                                                uri
+                                                    .getOrNull()
+                                                    ?.let {
+                                                        val id = mediaItem.mediaId
+                                                        val request = DownloadRequest
+                                                            .Builder(id, it)
+                                                            .setCustomCacheKey(id)
+                                                            .build()
+                                                        DownloadService.sendAddDownload(
+                                                            context,
+                                                            MediaDownloadService::class.java,
+                                                            request,
+                                                            true
+                                                        )
+                                                        Log.i(
+                                                            "info23",
+                                                            "request sent: ${mediaItem.mediaId} -> $uri"
+                                                        )
+                                                    }
+                                            }
                                         },
                                         onGoToEqualizer = {
                                             val intent =
