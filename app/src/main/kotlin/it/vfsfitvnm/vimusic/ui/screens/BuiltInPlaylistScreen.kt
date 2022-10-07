@@ -50,7 +50,6 @@ import it.vfsfitvnm.vimusic.utils.forcePlayFromBeginning
 import it.vfsfitvnm.vimusic.utils.secondary
 import it.vfsfitvnm.vimusic.utils.semiBold
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.map
 
 @ExperimentalAnimationApi
 @Composable
@@ -68,16 +67,11 @@ fun BuiltInPlaylistScreen(builtInPlaylist: BuiltInPlaylist) {
 
             val thumbnailSize = Dimensions.thumbnails.song.px
 
-            val songs by remember(binder?.cache, builtInPlaylist) {
+            val songs by remember("jasper", builtInPlaylist) {
                 when (builtInPlaylist) {
                     BuiltInPlaylist.Favorites -> Database.favorites()
-                    BuiltInPlaylist.Offline -> Database.songsWithContentLength().map { songs ->
-                        songs.filter { song ->
-                            song.contentLength?.let {
-                                binder?.cache?.isCached(song.id, 0, song.contentLength)
-                            } ?: false
-                        }
-                    }
+                    // TODO: fetch from a proper location here
+                    BuiltInPlaylist.Offline -> Database.songsWithContentLength()
                 }
             }.collectAsState(initial = emptyList(), context = Dispatchers.IO)
 

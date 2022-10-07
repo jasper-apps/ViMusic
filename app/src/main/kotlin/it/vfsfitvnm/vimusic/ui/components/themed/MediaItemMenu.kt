@@ -89,7 +89,6 @@ fun InHistoryMediaItemMenu(
     onDismiss: (() -> Unit)? = null
 ) {
     val menuState = LocalMenuState.current
-    val binder = LocalPlayerServiceBinder.current
 
     var isHiding by remember {
         mutableStateOf(false)
@@ -103,7 +102,6 @@ fun InHistoryMediaItemMenu(
                 (onDismiss ?: menuState::hide).invoke()
                 query {
                     // Not sure we can to this here
-                    binder?.cache?.removeResource(song.id)
                     Database.incrementTotalPlayTimeMs(song.id, -song.totalPlayTimeMs)
                 }
             }

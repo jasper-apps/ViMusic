@@ -226,12 +226,11 @@ fun PlayerView(
             mutableStateOf(false)
         }
 
-        var isShowingStatsForNerds by rememberSaveable {
-            mutableStateOf(false)
-        }
-
         val paddingValues = WindowInsets.navigationBars.asPaddingValues()
-        val playerBottomSheetState = rememberBottomSheetState(64.dp + paddingValues.calculateBottomPadding(), layoutState.expandedBound)
+        val playerBottomSheetState = rememberBottomSheetState(
+            64.dp + paddingValues.calculateBottomPadding(),
+            layoutState.expandedBound
+        )
 
         when (configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
@@ -255,8 +254,6 @@ fun PlayerView(
                         Thumbnail(
                             isShowingLyrics = isShowingLyrics,
                             onShowLyrics = { isShowingLyrics = it },
-                            isShowingStatsForNerds = isShowingStatsForNerds,
-                            onShowStatsForNerds = { isShowingStatsForNerds = it },
                             nestedScrollConnectionProvider = layoutState::nestedScrollConnection,
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
@@ -297,8 +294,6 @@ fun PlayerView(
                         Thumbnail(
                             isShowingLyrics = isShowingLyrics,
                             onShowLyrics = { isShowingLyrics = it },
-                            isShowingStatsForNerds = isShowingStatsForNerds,
-                            onShowStatsForNerds = { isShowingStatsForNerds = it },
                             nestedScrollConnectionProvider = layoutState::nestedScrollConnection,
                             modifier = Modifier
                                 .padding(horizontal = 32.dp, vertical = 8.dp)

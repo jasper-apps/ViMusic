@@ -45,8 +45,6 @@ import java.nio.channels.UnresolvedAddressException
 fun Thumbnail(
     isShowingLyrics: Boolean,
     onShowLyrics: (Boolean) -> Unit,
-    isShowingStatsForNerds: Boolean,
-    onShowStatsForNerds: (Boolean) -> Unit,
     nestedScrollConnectionProvider: () -> NestedScrollConnection,
     modifier: Modifier = Modifier
 ) {
@@ -110,7 +108,6 @@ fun Thumbnail(
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onTap = { onShowLyrics(true) },
-                            onLongPress = { onShowStatsForNerds(true) }
                         )
                     }
                     .fillMaxSize()
@@ -143,12 +140,6 @@ fun Thumbnail(
                 mediaMetadataProvider = mediaItem::mediaMetadata,
                 durationProvider = player::getDuration,
                 nestedScrollConnectionProvider = nestedScrollConnectionProvider,
-            )
-
-            StatsForNerds(
-                mediaId = mediaItem.mediaId,
-                isDisplayed = isShowingStatsForNerds && error == null,
-                onDismiss = { onShowStatsForNerds(false) }
             )
 
             PlaybackError(
