@@ -276,6 +276,8 @@ fun MediaItemMenu(
     onShare: (() -> Unit)? = null,
     onGlobalRouteEmitted: (() -> Unit)? = null,
 ) {
+    val context = LocalContext.current
+
     Menu(modifier = modifier) {
         RouteHandler(
             transitionSpec = {
@@ -381,7 +383,13 @@ fun MediaItemMenu(
                         )
                     }
 
-                    onDownload?.let {
+                    val chunkLength = 512 * 1024L
+                    if (onDownload != null && !context.globalCache.isCached(
+                            mediaItem.mediaId,
+                            0,
+                            chunkLength
+                        )
+                    ) {
                         MenuEntry(
                             icon = R.drawable.download,
                             text = "Download",
