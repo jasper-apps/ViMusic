@@ -1,5 +1,6 @@
 package it.vfsfitvnm.vimusic.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -47,6 +49,7 @@ import it.vfsfitvnm.vimusic.utils.asMediaItem
 import it.vfsfitvnm.vimusic.utils.enqueue
 import it.vfsfitvnm.vimusic.utils.forcePlayAtIndex
 import it.vfsfitvnm.vimusic.utils.forcePlayFromBeginning
+import it.vfsfitvnm.vimusic.utils.globalCache
 import it.vfsfitvnm.vimusic.utils.secondary
 import it.vfsfitvnm.vimusic.utils.semiBold
 import kotlinx.coroutines.Dispatchers
@@ -63,18 +66,20 @@ fun BuiltInPlaylistScreen(builtInPlaylist: BuiltInPlaylist) {
         host {
             val menuState = LocalMenuState.current
 
+            val context = LocalContext.current
             val binder = LocalPlayerServiceBinder.current
             val (colorPalette, typography) = LocalAppearance.current
 
             val thumbnailSize = Dimensions.thumbnails.song.px
 
-            val songs by remember(binder?.cache, builtInPlaylist) {
+            val songs by remember(context.globalCache, builtInPlaylist) {
                 when (builtInPlaylist) {
                     BuiltInPlaylist.Favorites -> Database.favorites()
                     BuiltInPlaylist.Offline -> Database.songsWithContentLength().map { songs ->
+                        Log.i("info23", "cached keys: ${context.globalCache.keys}")
                         songs.filter { song ->
                             song.contentLength?.let {
-                                binder?.cache?.isCached(song.id, 0, song.contentLength)
+                                context.globalCache.isCached(song.id, 0, song.contentLength)
                             } ?: false
                         }
                     }

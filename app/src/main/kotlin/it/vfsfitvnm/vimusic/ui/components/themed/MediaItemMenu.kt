@@ -56,6 +56,7 @@ import it.vfsfitvnm.vimusic.utils.asMediaItem
 import it.vfsfitvnm.vimusic.utils.color
 import it.vfsfitvnm.vimusic.utils.enqueue
 import it.vfsfitvnm.vimusic.utils.forcePlay
+import it.vfsfitvnm.vimusic.utils.globalCache
 import it.vfsfitvnm.vimusic.utils.semiBold
 import it.vfsfitvnm.vimusic.utils.shareAsYouTubeSong
 import it.vfsfitvnm.youtubemusic.models.NavigationEndpoint
@@ -89,7 +90,7 @@ fun InHistoryMediaItemMenu(
     onDismiss: (() -> Unit)? = null
 ) {
     val menuState = LocalMenuState.current
-    val binder = LocalPlayerServiceBinder.current
+    val context = LocalContext.current
 
     var isHiding by remember {
         mutableStateOf(false)
@@ -103,7 +104,7 @@ fun InHistoryMediaItemMenu(
                 (onDismiss ?: menuState::hide).invoke()
                 query {
                     // Not sure we can to this here
-                    binder?.cache?.removeResource(song.id)
+                    context.globalCache.removeResource(song.id)
                     Database.incrementTotalPlayTimeMs(song.id, -song.totalPlayTimeMs)
                 }
             }
@@ -206,6 +207,7 @@ fun BaseMediaItemMenu(
     modifier: Modifier = Modifier,
     onGoToEqualizer: (() -> Unit)? = null,
     onSetSleepTimer: (() -> Unit)? = null,
+    onDownload: (() -> Unit)? = null,
     onStartRadio: (() -> Unit)? = null,
     onPlayNext: (() -> Unit)? = null,
     onEnqueue: (() -> Unit)? = null,
@@ -222,6 +224,7 @@ fun BaseMediaItemMenu(
         onDismiss = onDismiss,
         onGoToEqualizer = onGoToEqualizer,
         onSetSleepTimer = onSetSleepTimer,
+        onDownload = onDownload,
         onStartRadio = onStartRadio,
         onPlayNext = onPlayNext,
         onEnqueue = onEnqueue,
@@ -259,6 +262,7 @@ fun MediaItemMenu(
     modifier: Modifier = Modifier,
     onGoToEqualizer: (() -> Unit)? = null,
     onSetSleepTimer: (() -> Unit)? = null,
+    onDownload: (() -> Unit)? = null,
     onStartRadio: (() -> Unit)? = null,
     onPlayNext: (() -> Unit)? = null,
     onEnqueue: (() -> Unit)? = null,
@@ -375,6 +379,16 @@ fun MediaItemMenu(
                                 onStartRadio()
                             }
                         )
+                    }
+
+                    onDownload?.let {
+                        MenuEntry(
+                            icon = R.drawable.download,
+                            text = "Download",
+                            onClick = {
+                                onDismiss()
+                                onDownload()
+                            })
                     }
 
                     onPlayNext?.let { onPlayNext ->

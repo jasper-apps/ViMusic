@@ -3,6 +3,7 @@ package it.vfsfitvnm.vimusic.ui.views
 import android.content.Intent
 import android.content.res.Configuration
 import android.media.audiofx.AudioEffect
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +34,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,10 +50,14 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.media3.common.Player
+import androidx.media3.exoplayer.offline.DownloadRequest
+import androidx.media3.exoplayer.offline.DownloadService
 import coil.compose.AsyncImage
 import it.vfsfitvnm.vimusic.LocalPlayerServiceBinder
 import it.vfsfitvnm.vimusic.R
+import it.vfsfitvnm.vimusic.download.MediaDownloadService
 import it.vfsfitvnm.vimusic.ui.components.BottomSheet
 import it.vfsfitvnm.vimusic.ui.components.BottomSheetState
 import it.vfsfitvnm.vimusic.ui.components.LocalMenuState
@@ -80,6 +86,7 @@ fun PlayerView(
     layoutState: BottomSheetState,
     modifier: Modifier = Modifier,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val menuState = LocalMenuState.current
 
     val (colorPalette, typography, thumbnailShape) = LocalAppearance.current
@@ -231,7 +238,10 @@ fun PlayerView(
         }
 
         val paddingValues = WindowInsets.navigationBars.asPaddingValues()
-        val playerBottomSheetState = rememberBottomSheetState(64.dp + paddingValues.calculateBottomPadding(), layoutState.expandedBound)
+        val playerBottomSheetState = rememberBottomSheetState(
+            64.dp + paddingValues.calculateBottomPadding(),
+            layoutState.expandedBound
+        )
 
         when (configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
@@ -351,6 +361,30 @@ fun PlayerView(
                                             binder.setupRadio(
                                                 NavigationEndpoint.Endpoint.Watch(videoId = mediaItem.mediaId)
                                             )
+                                        },
+                                        onDownload = {
+                                            val uri = mediaItem.mediaMetadata
+                                                .extras
+                                                ?.getString("sourceUri")
+                                                ?.toUri()
+
+                                            uri?.let {
+                                                val id = mediaItem.mediaId
+                                                val request = DownloadRequest
+                                                    .Builder(id, uri)
+                                                    .setCustomCacheKey(id)
+                                                    .build()
+                                                DownloadService.sendAddDownload(
+                                                    context,
+                                                    MediaDownloadService::class.java,
+                                                    request,
+                                                    true
+                                                )
+                                                Log.i(
+                                                    "info23",
+                                                    "request sent: ${mediaItem.mediaId} -> $uri"
+                                                )
+                                            }
                                         },
                                         onGoToEqualizer = {
                                             val intent =
