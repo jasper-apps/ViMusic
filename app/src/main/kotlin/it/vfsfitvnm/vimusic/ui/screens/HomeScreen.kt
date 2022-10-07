@@ -8,14 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -226,171 +219,177 @@ fun HomeScreen() {
                 }
 
                 item("playlistsHeader") {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        BasicText(
-                            text = "Playlists",
-                            style = typography.xl.semiBold,
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp, vertical = 16.dp)
-                        )
-                    }
-                    Row(
+                    Column(
+                        verticalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .zIndex(1f)
-                            .padding(horizontal = 8.dp)
-                            .padding(top = 16.dp)
+                       //     .padding(vertical = 80.dp)
+                            .fillMaxWidth().fillMaxHeight()
+                            .fillMaxSize()
+
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.add),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(colorPalette.text),
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            BasicText(
+                                text = "Playlists",
+                                style = typography.xl.semiBold,
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp, vertical = 16.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(40.dp))
+                        Row(
                             modifier = Modifier
-                                .clickable { isCreatingANewPlaylist = true }
-                                .padding(all = 8.dp)
-                                .size(20.dp)
-                        )
-
-                        Box {
-                            var isSortMenuDisplayed by remember {
-                                mutableStateOf(false)
-                            }
-
+                                .zIndex(1f)
+                                .padding(horizontal = 8.dp)
+                                .padding(top = 16.dp)
+                        ) {
                             Image(
-                                painter = painterResource(R.drawable.sort),
+                                painter = painterResource(R.drawable.add),
                                 contentDescription = null,
                                 colorFilter = ColorFilter.tint(colorPalette.text),
                                 modifier = Modifier
-                                    .clickable { isSortMenuDisplayed = true }
-                                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                                    .clickable { isCreatingANewPlaylist = true }
+                                    .padding(all = 8.dp)
                                     .size(20.dp)
                             )
-                            DropdownMenu(
-                                isDisplayed = isSortMenuDisplayed,
-                                onDismissRequest = { isSortMenuDisplayed = false }
+
+                            Box {
+                                var isSortMenuDisplayed by remember {
+                                    mutableStateOf(false)
+                                }
+
+                                Image(
+                                    painter = painterResource(R.drawable.sort),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(colorPalette.text),
+                                    modifier = Modifier
+                                        .clickable { isSortMenuDisplayed = true }
+                                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                                        .size(20.dp)
+                                )
+                                DropdownMenu(
+                                    isDisplayed = isSortMenuDisplayed,
+                                    onDismissRequest = { isSortMenuDisplayed = false }
+                                ) {
+                                    DropDownSection {
+                                        DropDownTextItem(
+                                            text = "NAME",
+                                            isSelected = playlistSortBy == PlaylistSortBy.Name,
+                                            onClick = {
+                                                isSortMenuDisplayed = false
+                                                playlistSortBy = PlaylistSortBy.Name
+                                            }
+                                        )
+
+                                        DropDownTextItem(
+                                            text = "DATE ADDED",
+                                            isSelected = playlistSortBy == PlaylistSortBy.DateAdded,
+                                            onClick = {
+                                                isSortMenuDisplayed = false
+                                                playlistSortBy = PlaylistSortBy.DateAdded
+                                            }
+                                        )
+
+                                        DropDownTextItem(
+                                            text = "SONG COUNT",
+                                            isSelected = playlistSortBy == PlaylistSortBy.SongCount,
+                                            onClick = {
+                                                isSortMenuDisplayed = false
+                                                playlistSortBy = PlaylistSortBy.SongCount
+                                            }
+                                        )
+                                    }
+
+                                    DropDownSectionSpacer()
+
+                                    DropDownSection {
+                                        DropDownTextItem(
+                                            text = when (playlistSortOrder) {
+                                                SortOrder.Ascending -> "ASCENDING"
+                                                SortOrder.Descending -> "DESCENDING"
+                                            },
+                                            onClick = {
+                                                isSortMenuDisplayed = false
+                                                playlistSortOrder = !playlistSortOrder
+                                            }
+                                        )
+                                    }
+                                    DropDownSectionSpacer()
+                                }
+                            }
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.BottomEnd
                             ) {
-                                DropDownSection {
-                                    DropDownTextItem(
-                                        text = "NAME",
-                                        isSelected = playlistSortBy == PlaylistSortBy.Name,
-                                        onClick = {
-                                            isSortMenuDisplayed = false
-                                            playlistSortBy = PlaylistSortBy.Name
-                                        }
-                                    )
-
-                                    DropDownTextItem(
-                                        text = "DATE ADDED",
-                                        isSelected = playlistSortBy == PlaylistSortBy.DateAdded,
-                                        onClick = {
-                                            isSortMenuDisplayed = false
-                                            playlistSortBy = PlaylistSortBy.DateAdded
-                                        }
-                                    )
-
-                                    DropDownTextItem(
-                                        text = "SONG COUNT",
-                                        isSelected = playlistSortBy == PlaylistSortBy.SongCount,
-                                        onClick = {
-                                            isSortMenuDisplayed = false
-                                            playlistSortBy = PlaylistSortBy.SongCount
-                                        }
-                                    )
-                                }
-
-                                DropDownSectionSpacer()
-
-                                DropDownSection {
-                                    DropDownTextItem(
-                                        text = when (playlistSortOrder) {
-                                            SortOrder.Ascending -> "ASCENDING"
-                                            SortOrder.Descending -> "DESCENDING"
-                                        },
-                                        onClick = {
-                                            isSortMenuDisplayed = false
-                                            playlistSortOrder = !playlistSortOrder
-                                        }
-                                    )
-                                }
-                                DropDownSectionSpacer()
+                                Image(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(colorPalette.text),
+                                    modifier = Modifier
+                                        .clickable { searchRoute("") }
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .size(24.dp)
+                                )
                             }
                         }
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.BottomEnd
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Image(
-                                painter = painterResource(R.drawable.search),
-                                contentDescription = null,
-                                colorFilter = ColorFilter.tint(colorPalette.text),
+                            LazyVerticalGrid(
+                                state = lazyVerticalGridState,
+                                columns = GridCells.Fixed(3),
+                                contentPadding = PaddingValues(horizontal = 16.dp),
                                 modifier = Modifier
-                                    .clickable { searchRoute("") }
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                                    .size(24.dp)
-                            )
-                        }
-                    }
-
-                }
-
-                item("playlists") {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        LazyVerticalGrid(
-                            state = lazyVerticalGridState,
-                            columns = GridCells.Fixed(3),
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            modifier = Modifier
-                                .animateContentSize()
-                                .fillMaxWidth()
-                                .height(124.dp * (if (playlistGridExpanded) 3 else 1))
-                        ) {
-                            items(
-                                items = playlistItems,
-                                key = { it.contentId },
-                                contentType = { it }
-                            ) { item ->
-                                when (item) {
-                                    is RealPlaylistItem -> PlaylistPreviewItem(
-                                        playlistPreview = item.playlistPreview,
-                                        modifier = Modifier
-                                            .animateItemPlacement()
-                                            .padding(all = 8.dp)
-                                            .clickable(
-                                                indication = rememberRipple(bounded = true),
-                                                interactionSource = remember { MutableInteractionSource() },
-                                                onClick = { localPlaylistRoute(item.playlistPreview.playlist.id) }
-                                            )
-                                    )
-                                    FavoritePlaylistItem -> BuiltInPlaylistItem(
-                                        icon = R.drawable.heart,
-                                        colorTint = colorPalette.red,
-                                        name = item.title,
-                                        modifier = Modifier
-                                            .animateItemPlacement()
-                                            .padding(all = 8.dp)
-                                            .clickable(
-                                                indication = rememberRipple(bounded = true),
-                                                interactionSource = remember { MutableInteractionSource() },
-                                                onClick = { builtInPlaylistRoute(BuiltInPlaylist.Favorites) }
-                                            )
-                                    )
-                                    OfflinePlaylistItem -> BuiltInPlaylistItem(
-                                        icon = R.drawable.airplane,
-                                        colorTint = colorPalette.blue,
-                                        name = item.title,
-                                        modifier = Modifier
-                                            .animateItemPlacement()
-                                            .padding(all = 8.dp)
-                                            .clickable(
-                                                indication = rememberRipple(bounded = true),
-                                                interactionSource = remember { MutableInteractionSource() },
-                                                onClick = { builtInPlaylistRoute(BuiltInPlaylist.Offline) }
-                                            )
-                                    )
+                                    .animateContentSize()
+                                    .fillMaxWidth()
+                                    .height(124.dp * (if (playlistGridExpanded) 3 else 1))
+                            ) {
+                                items(
+                                    items = playlistItems,
+                                    key = { it.contentId },
+                                    contentType = { it }
+                                ) { item ->
+                                    when (item) {
+                                        is RealPlaylistItem -> PlaylistPreviewItem(
+                                            playlistPreview = item.playlistPreview,
+                                            modifier = Modifier
+                                                .animateItemPlacement()
+                                                .padding(all = 8.dp)
+                                                .clickable(
+                                                    indication = rememberRipple(bounded = true),
+                                                    interactionSource = remember { MutableInteractionSource() },
+                                                    onClick = { localPlaylistRoute(item.playlistPreview.playlist.id) }
+                                                )
+                                        )
+                                        FavoritePlaylistItem -> BuiltInPlaylistItem(
+                                            icon = R.drawable.heart,
+                                            colorTint = colorPalette.red,
+                                            name = item.title,
+                                            modifier = Modifier
+                                                .animateItemPlacement()
+                                                .padding(all = 8.dp)
+                                                .clickable(
+                                                    indication = rememberRipple(bounded = true),
+                                                    interactionSource = remember { MutableInteractionSource() },
+                                                    onClick = { builtInPlaylistRoute(BuiltInPlaylist.Favorites) }
+                                                )
+                                        )
+                                        OfflinePlaylistItem -> BuiltInPlaylistItem(
+                                            icon = R.drawable.airplane,
+                                            colorTint = colorPalette.blue,
+                                            name = item.title,
+                                            modifier = Modifier
+                                                .animateItemPlacement()
+                                                .padding(all = 8.dp)
+                                                .clickable(
+                                                    indication = rememberRipple(bounded = true),
+                                                    interactionSource = remember { MutableInteractionSource() },
+                                                    onClick = { builtInPlaylistRoute(BuiltInPlaylist.Offline) }
+                                                )
+                                        )
+                                    }
                                 }
                             }
                         }
