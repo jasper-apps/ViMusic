@@ -26,23 +26,16 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.startForegroundService
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
-import androidx.core.net.toUri
-import androidx.core.text.isDigitsOnly
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
-import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.ResolvingDataSource
-import androidx.media3.datasource.cache.Cache
 import androidx.media3.datasource.cache.CacheDataSource
-import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
-import androidx.media3.datasource.cache.NoOpCacheEvictor
-import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.RenderersFactory
 import androidx.media3.exoplayer.analytics.AnalyticsListener
@@ -63,7 +56,6 @@ import androidx.media3.extractor.mp4.FragmentedMp4Extractor
 import it.vfsfitvnm.vimusic.Database
 import it.vfsfitvnm.vimusic.MainActivity
 import it.vfsfitvnm.vimusic.R
-import it.vfsfitvnm.vimusic.enums.ExoPlayerDiskCacheMaxSize
 import it.vfsfitvnm.vimusic.models.QueuedMediaItem
 import it.vfsfitvnm.vimusic.query
 import it.vfsfitvnm.vimusic.utils.InvincibleService
@@ -72,24 +64,23 @@ import it.vfsfitvnm.vimusic.utils.TimerJob
 import it.vfsfitvnm.vimusic.utils.YouTubeRadio
 import it.vfsfitvnm.vimusic.utils.activityPendingIntent
 import it.vfsfitvnm.vimusic.utils.broadCastPendingIntent
-import it.vfsfitvnm.vimusic.utils.exoPlayerDiskCacheMaxSizeKey
 import it.vfsfitvnm.vimusic.utils.findNextMediaItemById
 import it.vfsfitvnm.vimusic.utils.forcePlayFromBeginning
 import it.vfsfitvnm.vimusic.utils.forceSeekToNext
 import it.vfsfitvnm.vimusic.utils.forceSeekToPrevious
-import it.vfsfitvnm.vimusic.utils.getEnum
+import it.vfsfitvnm.vimusic.utils.globalCache
 import it.vfsfitvnm.vimusic.utils.intent
 import it.vfsfitvnm.vimusic.utils.isInvincibilityEnabledKey
 import it.vfsfitvnm.vimusic.utils.isShowingThumbnailInLockscreenKey
 import it.vfsfitvnm.vimusic.utils.mediaItems
 import it.vfsfitvnm.vimusic.utils.persistentQueueKey
 import it.vfsfitvnm.vimusic.utils.preferences
+import it.vfsfitvnm.vimusic.utils.releaseCache
 import it.vfsfitvnm.vimusic.utils.repeatModeKey
 import it.vfsfitvnm.vimusic.utils.shouldBePlaying
 import it.vfsfitvnm.vimusic.utils.skipSilenceKey
 import it.vfsfitvnm.vimusic.utils.timer
 import it.vfsfitvnm.vimusic.utils.volumeNormalizationKey
-import it.vfsfitvnm.youtubemusic.YouTube
 import it.vfsfitvnm.youtubemusic.models.NavigationEndpoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -109,7 +100,7 @@ import android.os.Binder as AndroidBinder
 class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListener.Callback,
     SharedPreferences.OnSharedPreferenceChangeListener {
     private lateinit var mediaSession: MediaSession
-    private lateinit var cache: SimpleCache
+
     private lateinit var player: ExoPlayer
 
     private val stateBuilder = PlaybackState.Builder()
@@ -176,30 +167,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
         isShowingThumbnailInLockscreen =
             preferences.getBoolean(isShowingThumbnailInLockscreenKey, false)
 
-        val cacheEvictor = when (val size =
-            preferences.getEnum(exoPlayerDiskCacheMaxSizeKey, ExoPlayerDiskCacheMaxSize.`2GB`)) {
-            ExoPlayerDiskCacheMaxSize.Unlimited -> NoOpCacheEvictor()
-            else -> LeastRecentlyUsedCacheEvictor(size.bytes)
-        }
-
-        // TODO: Remove in a future release
-        val directory = cacheDir.resolve("exoplayer").also { directory ->
-            if (directory.exists()) return@also
-
-            directory.mkdir()
-
-            cacheDir.listFiles()?.forEach { file ->
-                if (file.isDirectory && file.name.length == 1 && file.name.isDigitsOnly() || file.extension == "uid") {
-                    if (!file.renameTo(directory.resolve(file.name))) {
-                        file.deleteRecursively()
-                    }
-                }
-            }
-
-            filesDir.resolve("coil").deleteRecursively()
-        }
-        cache = SimpleCache(directory, cacheEvictor, StandaloneDatabaseProvider(this))
-
         player = ExoPlayer.Builder(this, createRendersFactory(), createMediaSourceFactory())
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_LOCAL)
@@ -253,7 +220,7 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
 
         mediaSession.isActive = false
         mediaSession.release()
-        cache.release()
+        releaseCache()
 
         super.onDestroy()
     }
@@ -596,14 +563,17 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
     }
 
     private fun createCacheDataSource(): DataSource.Factory {
-        return CacheDataSource.Factory().setCache(cache).apply {
-            setUpstreamDataSourceFactory(
-                DefaultHttpDataSource.Factory()
-                    .setConnectTimeoutMs(16000)
-                    .setReadTimeoutMs(8000)
-                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0")
-            )
-        }
+        return CacheDataSource.Factory()
+            .setCache(globalCache)
+            .setCacheWriteDataSinkFactory(null)
+            .apply {
+                setUpstreamDataSourceFactory(
+                    DefaultHttpDataSource.Factory()
+                        .setConnectTimeoutMs(16000)
+                        .setReadTimeoutMs(8000)
+                        .setUserAgent("Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0")
+                )
+            }
     }
 
     private fun createDataSourceFactory(): DataSource.Factory {
@@ -613,59 +583,31 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
         return ResolvingDataSource.Factory(createCacheDataSource()) { dataSpec ->
             val videoId = dataSpec.key ?: error("A key must be set")
 
-            if (cache.isCached(videoId, dataSpec.position, chunkLength)) {
+            val isCached = globalCache.isCached(videoId, dataSpec.position, chunkLength)
+
+            if (isCached) {
                 dataSpec
             } else {
                 when (videoId) {
                     ringBuffer.getOrNull(0)?.first -> dataSpec.withUri(ringBuffer.getOrNull(0)!!.second)
                     ringBuffer.getOrNull(1)?.first -> dataSpec.withUri(ringBuffer.getOrNull(1)!!.second)
                     else -> {
-                        val urlResult = runBlocking(Dispatchers.IO) {
-                            YouTube.player(videoId)
-                        }?.mapCatching { body ->
-                            when (val status = body.playabilityStatus.status) {
-                                "OK" -> body.streamingData?.adaptiveFormats?.findLast { format ->
-                                    format.itag == 251 || format.itag == 140
-                                }?.let { format ->
-                                    val mediaItem = runBlocking(Dispatchers.Main) {
-                                        player.findNextMediaItemById(videoId)
-                                    }
-
-                                    query {
-                                        mediaItem?.let(Database::insert)
-
-                                        Database.insert(
-                                            it.vfsfitvnm.vimusic.models.Format(
-                                                songId = videoId,
-                                                itag = format.itag,
-                                                mimeType = format.mimeType,
-                                                bitrate = format.bitrate,
-                                                loudnessDb = body.playerConfig?.audioConfig?.loudnessDb?.toFloat(),
-                                                contentLength = format.contentLength,
-                                                lastModified = format.lastModified
-                                            )
-                                        )
-                                    }
-
-                                    format.url
-                                } ?: throw PlayableFormatNotFoundException()
-                                "UNPLAYABLE" -> throw UnplayableException()
-                                "LOGIN_REQUIRED" -> throw LoginRequiredException()
-                                else -> throw PlaybackException(
-                                    status,
-                                    null,
-                                    PlaybackException.ERROR_CODE_REMOTE_ERROR
-                                )
+                        val uriResult = runBlocking(Dispatchers.Main) {
+                            val mediaItem = player.findNextMediaItemById(videoId)
+                            mediaItem?.let {
+                                BuildMediaUrl(it)
                             }
+
                         }
 
-                        urlResult?.getOrThrow()?.let { url ->
-                            ringBuffer.append(videoId to url.toUri())
-                            dataSpec.withUri(url.toUri())
+                        uriResult?.getOrThrow()?.let { uri ->
+                            ringBuffer.append(videoId to uri)
+                            dataSpec.withUri(uri)
                                 .subrange(dataSpec.uriPositionOffset, chunkLength)
+
                         } ?: throw PlaybackException(
                             null,
-                            urlResult?.exceptionOrNull(),
+                            uriResult?.exceptionOrNull(),
                             PlaybackException.ERROR_CODE_REMOTE_ERROR
                         )
                     }
@@ -714,9 +656,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
     inner class Binder : AndroidBinder() {
         val player: ExoPlayer
             get() = this@PlayerService.player
-
-        val cache: Cache
-            get() = this@PlayerService.cache
 
         val sleepTimerMillisLeft: StateFlow<Long?>?
             get() = timerJob?.millisLeft
