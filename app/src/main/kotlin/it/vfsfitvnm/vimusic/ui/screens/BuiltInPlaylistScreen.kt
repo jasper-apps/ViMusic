@@ -37,14 +37,11 @@ import it.vfsfitvnm.vimusic.ui.components.LocalMenuState
 import it.vfsfitvnm.vimusic.ui.components.TopAppBar
 import it.vfsfitvnm.vimusic.ui.components.themed.InFavoritesMediaItemMenu
 import it.vfsfitvnm.vimusic.ui.components.themed.InHistoryMediaItemMenu
-import it.vfsfitvnm.vimusic.ui.components.themed.Menu
-import it.vfsfitvnm.vimusic.ui.components.themed.MenuEntry
 import it.vfsfitvnm.vimusic.ui.styling.Dimensions
 import it.vfsfitvnm.vimusic.ui.styling.LocalAppearance
 import it.vfsfitvnm.vimusic.ui.styling.px
 import it.vfsfitvnm.vimusic.ui.views.SongItem
 import it.vfsfitvnm.vimusic.utils.asMediaItem
-import it.vfsfitvnm.vimusic.utils.enqueue
 import it.vfsfitvnm.vimusic.utils.forcePlayAtIndex
 import it.vfsfitvnm.vimusic.utils.forcePlayFromBeginning
 import it.vfsfitvnm.vimusic.utils.secondary
@@ -148,15 +145,6 @@ fun BuiltInPlaylistScreen(builtInPlaylist: BuiltInPlaylist) {
                                             .map(DetailedSong::asMediaItem)
                                     )
                                 }
-                                .padding(horizontal = 8.dp, vertical = 8.dp)
-                                .size(20.dp)
-                        )
-
-                        Image(
-                            painter = painterResource(R.drawable.ellipsis_horizontal),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(colorPalette.text),
-                            modifier = Modifier
                                 .padding(horizontal = 8.dp, vertical = 8.dp)
                                 .size(20.dp)
                         )
