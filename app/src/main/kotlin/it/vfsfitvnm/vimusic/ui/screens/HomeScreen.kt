@@ -9,17 +9,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -228,25 +227,29 @@ fun HomeScreen() {
                     }
                 }
 
+                item("playlistsHeader") {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                        .fillMaxWidth()
+                        .fillParentMaxHeight(0.3f)
+                    ) {
+                        BasicText(
+                            text = "Playlists",
+                            style = typography.xl.semiBold,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp, vertical = 16.dp)
+                        )
+                    }
+                }
+
                 item("playlists") {
                     Column(
-                        verticalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.Top,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .fillParentMaxHeight()
+                            .fillMaxSize()
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            BasicText(
-                                text = "Playlists",
-                                style = typography.xl.semiBold,
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp, vertical = 16.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(35.dp))
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -398,7 +401,6 @@ fun HomeScreen() {
                             }
                         }
                     }
-
                 }
             }
         }
