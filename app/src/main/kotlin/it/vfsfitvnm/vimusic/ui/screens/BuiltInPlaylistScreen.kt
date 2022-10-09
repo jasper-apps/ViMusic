@@ -157,21 +157,6 @@ fun BuiltInPlaylistScreen(builtInPlaylist: BuiltInPlaylist) {
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(colorPalette.text),
                             modifier = Modifier
-                                .clickable {
-                                    menuState.display {
-                                        Menu {
-                                            MenuEntry(
-                                                icon = R.drawable.enqueue,
-                                                text = "Enqueue",
-                                                isEnabled = songs.isNotEmpty(),
-                                                onClick = {
-                                                    menuState.hide()
-                                                    binder?.player?.enqueue(songs.map(DetailedSong::asMediaItem))
-                                                }
-                                            )
-                                        }
-                                    }
-                                }
                                 .padding(horizontal = 8.dp, vertical = 8.dp)
                                 .size(20.dp)
                         )
