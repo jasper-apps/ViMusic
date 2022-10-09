@@ -10,7 +10,6 @@ import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.DownloadManager
-import androidx.media3.exoplayer.offline.DownloadNotificationHelper
 import androidx.media3.exoplayer.offline.DownloadService
 import androidx.media3.exoplayer.scheduler.Scheduler
 import it.vfsfitvnm.vimusic.R
@@ -48,17 +47,19 @@ class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
         downloads: MutableList<Download>,
         notMetRequirements: Int
     ): Notification {
+        Log.i("info21", "getForegroundNotification: $downloads")
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 DOWNLOAD_NOTIFICATION_CHANNEL_ID,
                 DOWNLOAD_NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_DEFAULT
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
 
-        val helper = DownloadNotificationHelper(this, DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+        val helper = CustomDownloadNotificationHelper(this, DOWNLOAD_NOTIFICATION_CHANNEL_ID)
         val percent: Int = when (val size = downloads.size) {
             0 -> 0
             else -> downloads
