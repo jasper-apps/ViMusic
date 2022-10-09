@@ -19,7 +19,7 @@ import java.util.concurrent.Executors
 
 private const val DOWNLOAD_NOTIFICATION_ID = 137834
 private const val DOWNLOAD_NOTIFICATION_CHANNEL_ID = "85874"
-private const val DOWNLOAD_NOTIFICATION_CHANNEL_NAME = "Downloading"
+private const val DOWNLOAD_NOTIFICATION_CHANNEL_NAME = "Downloads"
 
 class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
 
