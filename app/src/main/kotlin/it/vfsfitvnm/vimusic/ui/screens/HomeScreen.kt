@@ -259,7 +259,7 @@ fun HomeScreen() {
                             colorFilter = ColorFilter.tint(colorPalette.text),
                             modifier = Modifier
                                 .clickable { isCreatingANewPlaylist = true }
-                                .padding(all = 8.dp)
+                                .padding(start = 16.dp, top = 8.dp, end = 8.dp, bottom= 8.dp)
                                 .size(20.dp)
                         )
                         Box {
