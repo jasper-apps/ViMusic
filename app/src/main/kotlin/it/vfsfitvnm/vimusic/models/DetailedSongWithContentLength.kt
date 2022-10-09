@@ -20,10 +20,4 @@ class DetailedSongWithContentLength(
         projection = ["contentLength"]
     )
     val contentLength: Long?
-) : DetailedSong(id, title, artistsText, durationText, thumbnailUrl, totalPlayTimeMs, albumId, artists) {
-
-    override fun toString(): String {
-        return "id: $id, contentLength: $contentLength"
-    }
-
-}
+) : DetailedSong(id, title, artistsText, durationText, thumbnailUrl, totalPlayTimeMs, albumId, artists)
