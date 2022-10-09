@@ -3,7 +3,6 @@ package it.vfsfitvnm.vimusic.ui.views
 import android.content.Intent
 import android.content.res.Configuration
 import android.media.audiofx.AudioEffect
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.result.contract.ActivityResultContracts
@@ -380,10 +379,6 @@ fun PlayerView(
                                                             MediaDownloadService::class.java,
                                                             request,
                                                             true
-                                                        )
-                                                        Log.i(
-                                                            "info23",
-                                                            "request sent: ${mediaItem.mediaId} -> $uri"
                                                         )
                                                     }
                                             }

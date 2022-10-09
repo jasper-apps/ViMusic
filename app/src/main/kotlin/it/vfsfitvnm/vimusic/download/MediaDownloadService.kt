@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -31,8 +30,6 @@ class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
 
         val dataSourceFactory = DefaultHttpDataSource.Factory()
 
-        Log.i("info23", "providing download manager")
-
         return DownloadManager(
             this,
             databaseProvider,
@@ -47,7 +44,6 @@ class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
         downloads: MutableList<Download>,
         notMetRequirements: Int
     ): Notification {
-        Log.i("info21", "getForegroundNotification: $downloads")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(

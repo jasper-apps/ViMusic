@@ -1,7 +1,6 @@
 package it.vfsfitvnm.vimusic
 
 import android.app.Application
-import android.util.Log
 import androidx.core.text.isDigitsOnly
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
@@ -22,10 +21,8 @@ class MainApplication : Application(), ImageLoaderFactory {
     private var _cache: SimpleCache? = null
     val cache: SimpleCache
         get() {
-            Log.i("info26", "cache accessed: $_cache")
             if (_cache == null) {
                 initCache()
-                Log.i("info26", "cache initialised: $_cache")
             }
             return _cache
                 ?: error("Cache has not been initialised")
@@ -83,7 +80,6 @@ class MainApplication : Application(), ImageLoaderFactory {
     fun releaseCache() {
         cache.release()
         _cache = null
-        Log.i("info26", "cache released: $_cache")
     }
 
 }

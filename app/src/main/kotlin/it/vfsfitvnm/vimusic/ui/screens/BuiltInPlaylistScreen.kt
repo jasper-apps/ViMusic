@@ -1,6 +1,5 @@
 package it.vfsfitvnm.vimusic.ui.screens
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -76,7 +75,6 @@ fun BuiltInPlaylistScreen(builtInPlaylist: BuiltInPlaylist) {
                 when (builtInPlaylist) {
                     BuiltInPlaylist.Favorites -> Database.favorites()
                     BuiltInPlaylist.Offline -> Database.songsWithContentLength().map { songs ->
-                        Log.i("info23", "cached keys: ${context.globalCache.keys}")
                         songs.filter { song ->
                             song.contentLength?.let {
                                 context.globalCache.isCached(song.id, 0, song.contentLength)

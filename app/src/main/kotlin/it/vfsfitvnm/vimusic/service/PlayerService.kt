@@ -19,7 +19,6 @@ import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -585,13 +584,10 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
             val videoId = dataSpec.key ?: error("A key must be set")
 
             val isCached = globalCache.isCached(videoId, dataSpec.position, chunkLength)
-            Log.i("info24", "checking if cached: <$videoId>: $isCached")
 
             if (isCached) {
-                Log.i("info24", "playing from cache")
                 dataSpec
             } else {
-                Log.i("info24", "playing from http")
                 when (videoId) {
                     ringBuffer.getOrNull(0)?.first -> dataSpec.withUri(ringBuffer.getOrNull(0)!!.second)
                     ringBuffer.getOrNull(1)?.first -> dataSpec.withUri(ringBuffer.getOrNull(1)!!.second)

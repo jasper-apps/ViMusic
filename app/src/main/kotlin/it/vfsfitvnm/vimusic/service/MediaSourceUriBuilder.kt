@@ -1,7 +1,6 @@
 package it.vfsfitvnm.vimusic.service
 
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -11,7 +10,6 @@ import it.vfsfitvnm.vimusic.query
 import it.vfsfitvnm.youtubemusic.YouTube
 
 suspend fun BuildMediaUrl(mediaItem: MediaItem): Result<Uri> {
-    Log.i("info27", "building media uri for ${mediaItem.mediaId}")
     val urlResult = YouTube.player(mediaItem.mediaId)
         .mapCatching { body ->
             when (val status = body.playabilityStatus.status) {
@@ -35,7 +33,6 @@ suspend fun BuildMediaUrl(mediaItem: MediaItem): Result<Uri> {
                     }
 
                     val uri = format.url?.toUri()
-                    Log.i("info27", "uri for ${mediaItem.mediaId} built: $uri")
 
                     uri
                 } ?: throw PlayableFormatNotFoundException()
