@@ -55,6 +55,6 @@ fun typographyOf(color: Color): Typography {
         s = textStyle.copy(fontSize = 16.sp),
         m = textStyle.copy(fontSize = 18.sp),
         l = textStyle.copy(fontSize = 20.sp),
-        xl = textStyle.copy(fontSize = 25.sp)
+        xl = textStyle.copy(fontSize = 30.sp)
     )
 }
