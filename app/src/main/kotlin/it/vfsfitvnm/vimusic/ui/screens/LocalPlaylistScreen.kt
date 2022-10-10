@@ -207,20 +207,6 @@ fun LocalPlaylistScreen(playlistId: Long) {
                                         menuState.display {
                                             Menu {
                                                 MenuEntry(
-                                                    icon = R.drawable.enqueue,
-                                                    text = "Enqueue",
-                                                    isEnabled = playlistWithSongs.songs.isNotEmpty(),
-                                                    onClick = {
-                                                        menuState.hide()
-                                                        binder?.player?.enqueue(
-                                                            playlistWithSongs.songs.map(
-                                                                DetailedSong::asMediaItem
-                                                            )
-                                                        )
-                                                    }
-                                                )
-
-                                                MenuEntry(
                                                     icon = R.drawable.pencil,
                                                     text = "Rename",
                                                     onClick = {
@@ -238,29 +224,43 @@ fun LocalPlaylistScreen(playlistId: Long) {
                                                             transaction {
                                                                 runBlocking(Dispatchers.IO) {
                                                                     withContext(Dispatchers.IO) {
-                                                                        YouTube.playlist(browseId)?.map {
-                                                                            it.next()
-                                                                        }?.map { playlist ->
-                                                                            playlist.copy(items = playlist.items?.filter { it.info.endpoint != null })
-                                                                        }
-                                                                    }
-                                                                }?.getOrNull()?.let { remotePlaylist ->
-                                                                    Database.clearPlaylist(playlistWithSongs.playlist.id)
-
-                                                                    remotePlaylist.items?.forEachIndexed { index, song ->
-                                                                        song.toMediaItem(browseId, remotePlaylist)?.let { mediaItem ->
-                                                                            Database.insert(mediaItem)
-
-                                                                            Database.insert(
-                                                                                SongPlaylistMap(
-                                                                                    songId = mediaItem.mediaId,
-                                                                                    playlistId = playlistId,
-                                                                                    position = index
-                                                                                )
-                                                                            )
-                                                                        }
+                                                                        YouTube
+                                                                            .playlist(browseId)
+                                                                            ?.map {
+                                                                                it.next()
+                                                                            }
+                                                                            ?.map { playlist ->
+                                                                                playlist.copy(items = playlist.items?.filter { it.info.endpoint != null })
+                                                                            }
                                                                     }
                                                                 }
+                                                                    ?.getOrNull()
+                                                                    ?.let { remotePlaylist ->
+                                                                        Database.clearPlaylist(
+                                                                            playlistWithSongs.playlist.id
+                                                                        )
+
+                                                                        remotePlaylist.items?.forEachIndexed { index, song ->
+                                                                            song
+                                                                                .toMediaItem(
+                                                                                    browseId,
+                                                                                    remotePlaylist
+                                                                                )
+                                                                                ?.let { mediaItem ->
+                                                                                    Database.insert(
+                                                                                        mediaItem
+                                                                                    )
+
+                                                                                    Database.insert(
+                                                                                        SongPlaylistMap(
+                                                                                            songId = mediaItem.mediaId,
+                                                                                            playlistId = playlistId,
+                                                                                            position = index
+                                                                                        )
+                                                                                    )
+                                                                                }
+                                                                        }
+                                                                    }
                                                             }
                                                         }
                                                     )

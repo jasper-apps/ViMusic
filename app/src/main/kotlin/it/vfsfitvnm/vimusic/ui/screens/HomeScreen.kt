@@ -8,17 +8,19 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -84,7 +86,7 @@ fun HomeScreen() {
     val (colorPalette, typography) = LocalAppearance.current
 
     val lazyListState = rememberLazyListState()
-    val lazyHorizontalGridState = rememberLazyGridState()
+    val lazyVerticalGridState = rememberLazyGridState()
 
     var playlistSortBy by rememberPreference(playlistSortByKey, PlaylistSortBy.DateAdded)
     var playlistSortOrder by rememberPreference(playlistSortOrderKey, SortOrder.Ascending)
@@ -200,14 +202,13 @@ fun HomeScreen() {
                 )
             }
 
-            LazyColumn(
-                state = lazyListState,
-                contentPadding = LocalPlayerAwarePaddingValues.current,
+            Column(
                 modifier = Modifier
                     .background(colorPalette.background0)
+                    .padding(LocalPlayerAwarePaddingValues.current)
                     .fillMaxSize()
             ) {
-                item("topAppBar") {
+                Row {
                     TopAppBar(
                         modifier = Modifier
                             .height(52.dp)
@@ -222,50 +223,49 @@ fun HomeScreen() {
                                 .badge(color = colorPalette.red, isDisplayed = isFirstLaunch)
                                 .size(24.dp)
                         )
-
-                        Image(
-                            painter = painterResource(R.drawable.search),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(colorPalette.text),
-                            modifier = Modifier
-                                .clickable { searchRoute("") }
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .size(24.dp)
-                        )
                     }
                 }
 
-                item("playlistsHeader") {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.3f)
+                ) {
+                    BasicText(
+                        text = "Playlists",
+                        style = typography.xl.semiBold,
                         modifier = Modifier
+                            .padding(horizontal = 8.dp, vertical = 16.dp)
+                    )
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .zIndex(1f)
                             .padding(horizontal = 8.dp)
                             .padding(top = 16.dp)
                     ) {
-                        BasicText(
-                            text = "Playlists",
-                            style = typography.m.semiBold,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 8.dp)
-                        )
-
                         Image(
                             painter = painterResource(R.drawable.add),
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(colorPalette.text),
                             modifier = Modifier
                                 .clickable { isCreatingANewPlaylist = true }
-                                .padding(all = 8.dp)
+                                .padding(start = 16.dp, top = 8.dp, end = 8.dp, bottom= 8.dp)
                                 .size(20.dp)
                         )
-
                         Box {
                             var isSortMenuDisplayed by remember {
                                 mutableStateOf(false)
                             }
-
                             Image(
                                 painter = painterResource(R.drawable.sort),
                                 contentDescription = null,
@@ -275,7 +275,6 @@ fun HomeScreen() {
                                     .padding(horizontal = 8.dp, vertical = 8.dp)
                                     .size(20.dp)
                             )
-
                             DropdownMenu(
                                 isDisplayed = isSortMenuDisplayed,
                                 onDismissRequest = { isSortMenuDisplayed = false }
@@ -324,33 +323,31 @@ fun HomeScreen() {
                                     )
                                 }
                                 DropDownSectionSpacer()
-
-                                DropDownSection {
-                                    DropDownTextItem(
-                                        text = when (playlistGridExpanded) {
-                                            true -> "COLLAPSE"
-                                            false -> "EXPAND"
-                                        },
-                                        onClick = {
-                                            isSortMenuDisplayed = false
-                                            playlistGridExpanded = !playlistGridExpanded
-                                        }
-                                    )
-                                }
                             }
                         }
+                        Box(
+                            contentAlignment = Alignment.BottomEnd,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.search),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(colorPalette.text),
+                                modifier = Modifier
+                                    .clickable { searchRoute("") }
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    .size(24.dp)
+                            )
+                        }
                     }
-                }
-
-                item("playlists") {
-                    LazyHorizontalGrid(
-                        state = lazyHorizontalGridState,
-                        rows = GridCells.Fixed(if (playlistGridExpanded) 3 else 1),
+                    LazyVerticalGrid(
+                        state = lazyVerticalGridState,
+                        columns = GridCells.Fixed(3),
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         modifier = Modifier
                             .animateContentSize()
                             .fillMaxWidth()
-                            .height(124.dp * (if (playlistGridExpanded) 3 else 1))
                     ) {
                         items(
                             items = playlistItems,
@@ -399,6 +396,7 @@ fun HomeScreen() {
                         }
                     }
                 }
+
             }
         }
     }
