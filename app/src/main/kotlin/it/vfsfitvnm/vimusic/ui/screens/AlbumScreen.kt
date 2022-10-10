@@ -244,17 +244,6 @@ fun AlbumScreen(browseId: String) {
                                     menuState.display {
                                         Menu {
                                             MenuEntry(
-                                                icon = R.drawable.enqueue,
-                                                text = "Enqueue",
-                                                onClick = {
-                                                    menuState.hide()
-                                                    binder?.player?.enqueue(
-                                                        songs.map(DetailedSong::asMediaItem)
-                                                    )
-                                                }
-                                            )
-
-                                            MenuEntry(
                                                 icon = R.drawable.playlist,
                                                 text = "Import as playlist",
                                                 onClick = {
