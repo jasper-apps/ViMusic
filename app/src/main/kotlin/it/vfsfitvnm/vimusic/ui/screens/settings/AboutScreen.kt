@@ -65,7 +65,7 @@ fun AboutScreen() {
 
                 SettingsTitle(text = "About")
 
-                SettingsDescription(text = "v${BuildConfig.VERSION_NAME}\nby vfsfitvnm")
+                SettingsDescription(text = "v${BuildConfig.VERSION_NAME}\nby Jasper Apps")
 
                 SettingsEntryGroupText(title = "SOCIAL")
 
@@ -73,7 +73,7 @@ fun AboutScreen() {
                     title = "GitHub",
                     text = "View the source code",
                     onClick = {
-                        uriHandler.openUri("https://github.com/vfsfitvnm/ViMusic")
+                        uriHandler.openUri("https://github.com/jasper-apps/ViMusic")
                     }
                 )
 
