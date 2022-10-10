@@ -199,7 +199,7 @@ interface Database {
     fun format(songId: String): Flow<Format>
 
     @Transaction
-    @Query("SELECT * FROM Song JOIN Format ON id = songId WHERE contentLength IS NOT NULL AND totalPlayTimeMs > 0 ORDER BY Song.ROWID DESC")
+    @Query("SELECT * FROM Song JOIN Format ON id = songId WHERE contentLength IS NOT NULL ORDER BY Song.ROWID DESC")
     @RewriteQueriesToDropUnusedColumns
     fun songsWithContentLength(): Flow<List<DetailedSongWithContentLength>>
 

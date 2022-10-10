@@ -481,7 +481,7 @@ object YouTube {
         }.recoverIfCancelled()
     }
 
-    suspend fun player(videoId: String, playlistId: String? = null): Result<PlayerResponse>? {
+    suspend fun player(videoId: String, playlistId: String? = null): Result<PlayerResponse> {
         return runCatching {
             val playerResponse = client.post("/youtubei/v1/player") {
                 contentType(ContentType.Application.Json)
@@ -541,7 +541,7 @@ object YouTube {
                     )
                 )
             }
-        }.recoverIfCancelled()
+        }
     }
 
     private suspend fun getQueue(body: GetQueueBody): Result<List<Item.Song>?>? {
@@ -864,12 +864,14 @@ object YouTube {
                         parameter("continuation", continuation)
                     }.body<ContinuationResponse>().let { continuationResponse ->
                         copy(
-                            items = items?.plus(continuationResponse
-                                .continuationContents
-                                .musicShelfContinuation
-                                ?.contents
-                                ?.map(MusicShelfRenderer.Content::musicResponsiveListItemRenderer)
-                                ?.mapNotNull(Item.Companion::from) ?: emptyList()),
+                            items = items?.plus(
+                                continuationResponse
+                                    .continuationContents
+                                    .musicShelfContinuation
+                                    ?.contents
+                                    ?.map(MusicShelfRenderer.Content::musicResponsiveListItemRenderer)
+                                    ?.mapNotNull(Item.Companion::from) ?: emptyList()
+                            ),
                             continuation = continuationResponse
                                 .continuationContents
                                 .musicShelfContinuation
@@ -886,7 +888,7 @@ object YouTube {
 
     suspend fun album(browseId: String): Result<PlaylistOrAlbum>? {
         return playlistOrAlbum(browseId)?.map { album ->
-           album.url?.let { Url(it).parameters["list"] }?.let { playlistId ->
+            album.url?.let { Url(it).parameters["list"] }?.let { playlistId ->
                 playlistOrAlbum("VL$playlistId")?.getOrNull()?.let { playlist ->
                     album.copy(items = playlist.items)
                 }
