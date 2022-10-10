@@ -65,7 +65,7 @@ fun AboutScreen() {
 
                 SettingsTitle(text = "About")
 
-                SettingsDescription(text = "v${BuildConfig.VERSION_NAME}\nby jasper-apps")
+                SettingsDescription(text = "v${BuildConfig.VERSION_NAME}\nby Jasper Apps")
 
                 SettingsEntryGroupText(title = "SOCIAL")
 
