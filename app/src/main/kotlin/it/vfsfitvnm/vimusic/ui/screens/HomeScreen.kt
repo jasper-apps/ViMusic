@@ -242,7 +242,7 @@ fun HomeScreen() {
                 }
 
                 Column(
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Top,
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
