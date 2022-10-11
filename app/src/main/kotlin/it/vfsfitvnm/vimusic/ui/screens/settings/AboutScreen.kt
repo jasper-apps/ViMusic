@@ -83,7 +83,7 @@ fun AboutScreen() {
                     title = "Report an issue",
                     text = "You will be redirected to GitHub",
                     onClick = {
-                        uriHandler.openUri("https://github.com/vfsfitvnm/ViMusic/issues/new?assignees=&labels=bug&template=bug_report.yaml")
+                        uriHandler.openUri("https://github.com/jasper-apps/ViMusic/issues")
                     }
                 )
 
@@ -91,7 +91,7 @@ fun AboutScreen() {
                     title = "Request a feature or suggest an idea",
                     text = "You will be redirected to GitHub",
                     onClick = {
-                        uriHandler.openUri("https://github.com/vfsfitvnm/ViMusic/issues/new?assignees=&labels=enhancement&template=feature_request.yaml")
+                        uriHandler.openUri("https://github.com/jasper-apps/ViMusic/issues")
                     }
                 )
             }
