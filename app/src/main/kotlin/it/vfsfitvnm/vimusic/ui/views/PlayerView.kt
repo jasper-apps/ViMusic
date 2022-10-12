@@ -383,40 +383,6 @@ fun PlayerView(
                                                     }
                                             }
                                         },
-                                        onGoToEqualizer = {
-                                            val intent =
-                                                Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
-                                                    putExtra(
-                                                        AudioEffect.EXTRA_AUDIO_SESSION,
-                                                        binder.player.audioSessionId
-                                                    )
-                                                    putExtra(
-                                                        AudioEffect.EXTRA_PACKAGE_NAME,
-                                                        context.packageName
-                                                    )
-                                                    putExtra(
-                                                        AudioEffect.EXTRA_CONTENT_TYPE,
-                                                        AudioEffect.CONTENT_TYPE_MUSIC
-                                                    )
-                                                }
-
-                                            if (intent.resolveActivity(context.packageManager) != null) {
-                                                val contract =
-                                                    ActivityResultContracts.StartActivityForResult()
-
-                                                resultRegistryOwner?.activityResultRegistry
-                                                    ?.register("", contract) {}
-                                                    ?.launch(intent)
-                                            } else {
-                                                Toast
-                                                    .makeText(
-                                                        context,
-                                                        "No equalizer app found!",
-                                                        Toast.LENGTH_SHORT
-                                                    )
-                                                    .show()
-                                            }
-                                        },
                                         onSetSleepTimer = {},
                                         onDismiss = menuState::hide,
                                         onGlobalRouteEmitted = layoutState::collapseSoft,
