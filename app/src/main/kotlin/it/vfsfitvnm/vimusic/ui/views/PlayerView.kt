@@ -383,7 +383,6 @@ fun PlayerView(
                                                     }
                                             }
                                         },
-                                        onSetSleepTimer = {},
                                         onDismiss = menuState::hide,
                                         onGlobalRouteEmitted = layoutState::collapseSoft,
                                     )

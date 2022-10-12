@@ -60,7 +60,6 @@ import it.vfsfitvnm.vimusic.models.QueuedMediaItem
 import it.vfsfitvnm.vimusic.query
 import it.vfsfitvnm.vimusic.utils.InvincibleService
 import it.vfsfitvnm.vimusic.utils.RingBuffer
-import it.vfsfitvnm.vimusic.utils.TimerJob
 import it.vfsfitvnm.vimusic.utils.YouTubeRadio
 import it.vfsfitvnm.vimusic.utils.activityPendingIntent
 import it.vfsfitvnm.vimusic.utils.broadCastPendingIntent
@@ -79,13 +78,11 @@ import it.vfsfitvnm.vimusic.utils.releaseCache
 import it.vfsfitvnm.vimusic.utils.repeatModeKey
 import it.vfsfitvnm.vimusic.utils.shouldBePlaying
 import it.vfsfitvnm.vimusic.utils.skipSilenceKey
-import it.vfsfitvnm.vimusic.utils.timer
 import it.vfsfitvnm.vimusic.utils.volumeNormalizationKey
 import it.vfsfitvnm.youtubemusic.models.NavigationEndpoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -93,7 +90,6 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
-import kotlin.system.exitProcess
 import android.os.Binder as AndroidBinder
 
 @Suppress("DEPRECATION")
@@ -116,8 +112,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
     private val metadataBuilder = MediaMetadata.Builder()
 
     private var notificationManager: NotificationManager? = null
-
-    private var timerJob: TimerJob? = null
 
     private var radio: YouTubeRadio? = null
 
@@ -545,20 +539,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
                     }
                 )
             }
-
-            if (getNotificationChannel(SleepTimerNotificationChannelId) == null) {
-                createNotificationChannel(
-                    NotificationChannel(
-                        SleepTimerNotificationChannelId,
-                        "Sleep timer",
-                        NotificationManager.IMPORTANCE_LOW
-                    ).apply {
-                        setSound(null, null)
-                        enableLights(false)
-                        enableVibration(false)
-                    }
-                )
-            }
         }
     }
 
@@ -657,9 +637,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
         val player: ExoPlayer
             get() = this@PlayerService.player
 
-        val sleepTimerMillisLeft: StateFlow<Long?>?
-            get() = timerJob?.millisLeft
-
         private var radioJob: Job? = null
 
         var isLoadingRadio by mutableStateOf(false)
@@ -667,32 +644,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
 
         fun setBitmapListener(listener: ((Bitmap?) -> Unit)?) {
             bitmapProvider.listener = listener
-        }
-
-        fun startSleepTimer(delayMillis: Long) {
-            timerJob?.cancel()
-
-            timerJob = coroutineScope.timer(delayMillis) {
-                val notification = NotificationCompat
-                    .Builder(this@PlayerService, SleepTimerNotificationChannelId)
-                    .setContentTitle("Sleep timer ended")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setAutoCancel(true)
-                    .setOnlyAlertOnce(true)
-                    .setShowWhen(true)
-                    .setSmallIcon(R.drawable.app_icon)
-                    .build()
-
-                notificationManager?.notify(SleepTimerNotificationId, notification)
-
-                stopSelf()
-                exitProcess(0)
-            }
-        }
-
-        fun cancelSleepTimer() {
-            timerJob?.cancel()
-            timerJob = null
         }
 
         fun setupRadio(endpoint: NavigationEndpoint.Endpoint.Watch?) =
@@ -778,7 +729,5 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
         const val NotificationId = 1001
         const val NotificationChannelId = "default_channel_id"
 
-        const val SleepTimerNotificationId = 1002
-        const val SleepTimerNotificationChannelId = "sleep_timer_channel_id"
     }
 }
