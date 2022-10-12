@@ -421,17 +421,6 @@ fun MediaItemMenu(
                         )
                     }
 
-                    onGoToEqualizer?.let { onGoToEqualizer ->
-                        MenuEntry(
-                            icon = R.drawable.equalizer,
-                            text = "Equalizer",
-                            onClick = {
-                                onDismiss()
-                                onGoToEqualizer()
-                            }
-                        )
-                    }
-
                     onSetSleepTimer?.let {
                         val binder = LocalPlayerServiceBinder.current
                         val (colorPalette, typography) = LocalAppearance.current
