@@ -26,7 +26,6 @@
 - Reorder songs in playlist or queue
 - Light/Dark/Dynamic theme
 - Skip silence
-- Sleep timer
 - Audio normalization
 - Persistent queue
 - Open YouTube/YouTube Music links (`watch`, `playlist`)

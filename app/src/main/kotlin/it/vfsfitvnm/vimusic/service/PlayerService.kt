@@ -60,7 +60,6 @@ import it.vfsfitvnm.vimusic.models.QueuedMediaItem
 import it.vfsfitvnm.vimusic.query
 import it.vfsfitvnm.vimusic.utils.InvincibleService
 import it.vfsfitvnm.vimusic.utils.RingBuffer
-import it.vfsfitvnm.vimusic.utils.TimerJob
 import it.vfsfitvnm.vimusic.utils.YouTubeRadio
 import it.vfsfitvnm.vimusic.utils.activityPendingIntent
 import it.vfsfitvnm.vimusic.utils.broadCastPendingIntent
@@ -79,13 +78,11 @@ import it.vfsfitvnm.vimusic.utils.releaseCache
 import it.vfsfitvnm.vimusic.utils.repeatModeKey
 import it.vfsfitvnm.vimusic.utils.shouldBePlaying
 import it.vfsfitvnm.vimusic.utils.skipSilenceKey
-import it.vfsfitvnm.vimusic.utils.timer
 import it.vfsfitvnm.vimusic.utils.volumeNormalizationKey
 import it.vfsfitvnm.youtubemusic.models.NavigationEndpoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -93,7 +90,6 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
-import kotlin.system.exitProcess
 import android.os.Binder as AndroidBinder
 
 @Suppress("DEPRECATION")
@@ -116,8 +112,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
     private val metadataBuilder = MediaMetadata.Builder()
 
     private var notificationManager: NotificationManager? = null
-
-    private var timerJob: TimerJob? = null
 
     private var radio: YouTubeRadio? = null
 
