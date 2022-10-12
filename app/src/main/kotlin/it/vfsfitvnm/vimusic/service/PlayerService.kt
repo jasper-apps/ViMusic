@@ -545,20 +545,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
                     }
                 )
             }
-
-            if (getNotificationChannel(SleepTimerNotificationChannelId) == null) {
-                createNotificationChannel(
-                    NotificationChannel(
-                        SleepTimerNotificationChannelId,
-                        "Sleep timer",
-                        NotificationManager.IMPORTANCE_LOW
-                    ).apply {
-                        setSound(null, null)
-                        enableLights(false)
-                        enableVibration(false)
-                    }
-                )
-            }
         }
     }
 
@@ -657,9 +643,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
         val player: ExoPlayer
             get() = this@PlayerService.player
 
-        val sleepTimerMillisLeft: StateFlow<Long?>?
-            get() = timerJob?.millisLeft
-
         private var radioJob: Job? = null
 
         var isLoadingRadio by mutableStateOf(false)
@@ -667,32 +650,6 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
 
         fun setBitmapListener(listener: ((Bitmap?) -> Unit)?) {
             bitmapProvider.listener = listener
-        }
-
-        fun startSleepTimer(delayMillis: Long) {
-            timerJob?.cancel()
-
-            timerJob = coroutineScope.timer(delayMillis) {
-                val notification = NotificationCompat
-                    .Builder(this@PlayerService, SleepTimerNotificationChannelId)
-                    .setContentTitle("Sleep timer ended")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setAutoCancel(true)
-                    .setOnlyAlertOnce(true)
-                    .setShowWhen(true)
-                    .setSmallIcon(R.drawable.app_icon)
-                    .build()
-
-                notificationManager?.notify(SleepTimerNotificationId, notification)
-
-                stopSelf()
-                exitProcess(0)
-            }
-        }
-
-        fun cancelSleepTimer() {
-            timerJob?.cancel()
-            timerJob = null
         }
 
         fun setupRadio(endpoint: NavigationEndpoint.Endpoint.Watch?) =
@@ -778,7 +735,5 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
         const val NotificationId = 1001
         const val NotificationChannelId = "default_channel_id"
 
-        const val SleepTimerNotificationId = 1002
-        const val SleepTimerNotificationChannelId = "sleep_timer_channel_id"
     }
 }
