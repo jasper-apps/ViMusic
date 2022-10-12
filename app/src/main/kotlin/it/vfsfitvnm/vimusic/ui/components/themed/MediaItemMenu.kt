@@ -251,7 +251,6 @@ fun BaseMediaItemMenu(
     MediaItemMenu(
         mediaItem = mediaItem,
         onDismiss = onDismiss,
-        onGoToEqualizer = onGoToEqualizer,
         onSetSleepTimer = onSetSleepTimer,
         onDownload = onDownload,
         onStartRadio = onStartRadio,
@@ -289,7 +288,6 @@ fun MediaItemMenu(
     mediaItem: MediaItem,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    onGoToEqualizer: (() -> Unit)? = null,
     onSetSleepTimer: (() -> Unit)? = null,
     onDownload: (() -> Unit)? = null,
     onStartRadio: (() -> Unit)? = null,
