@@ -17,13 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,17 +28,21 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.offline.DownloadRequest
+import androidx.media3.exoplayer.offline.DownloadService
 import it.vfsfitvnm.route.RouteHandler
 import it.vfsfitvnm.route.empty
 import it.vfsfitvnm.vimusic.Database
 import it.vfsfitvnm.vimusic.LocalPlayerServiceBinder
 import it.vfsfitvnm.vimusic.R
+import it.vfsfitvnm.vimusic.download.MediaDownloadService
 import it.vfsfitvnm.vimusic.enums.PlaylistSortBy
 import it.vfsfitvnm.vimusic.enums.SortOrder
 import it.vfsfitvnm.vimusic.models.DetailedSong
 import it.vfsfitvnm.vimusic.models.Playlist
 import it.vfsfitvnm.vimusic.models.SongPlaylistMap
 import it.vfsfitvnm.vimusic.query
+import it.vfsfitvnm.vimusic.service.BuildMediaUrl
 import it.vfsfitvnm.vimusic.transaction
 import it.vfsfitvnm.vimusic.ui.components.ChunkyButton
 import it.vfsfitvnm.vimusic.ui.components.LocalMenuState
@@ -62,6 +61,7 @@ import it.vfsfitvnm.vimusic.utils.shareAsYouTubeSong
 import it.vfsfitvnm.youtubemusic.models.NavigationEndpoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
 @Composable
@@ -153,6 +153,8 @@ fun NonQueuedMediaItemMenu(
 ) {
     val menuState = LocalMenuState.current
     val binder = LocalPlayerServiceBinder.current
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     BaseMediaItemMenu(
         mediaItem = mediaItem,
@@ -166,6 +168,27 @@ fun NonQueuedMediaItemMenu(
                     playlistId = mediaItem.mediaMetadata.extras?.getString("playlistId")
                 )
             )
+        },
+        onDownload = {
+            coroutineScope.launch {
+                val uri = BuildMediaUrl(mediaItem)
+
+                uri
+                    .getOrNull()
+                    ?.let {
+                        val id = mediaItem.mediaId
+                        val request = DownloadRequest
+                            .Builder(id, it)
+                            .setCustomCacheKey(id)
+                            .build()
+                        DownloadService.sendAddDownload(
+                            context,
+                            MediaDownloadService::class.java,
+                            request,
+                            true
+                        )
+                    }
+            }
         },
         onPlayNext = { binder?.player?.addNext(mediaItem) },
         onEnqueue = { binder?.player?.enqueue(mediaItem) },
