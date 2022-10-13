@@ -86,7 +86,7 @@ fun InHistoryMediaItemMenu(
 
     if (isHiding) {
         ConfirmationDialog(
-            text = "Do you really delete this song?",
+            text = "Do you really want to delete this song?",
             onDismiss = { isHiding = false },
             onConfirm = {
                 (onDismiss ?: menuState::hide).invoke()
