@@ -86,7 +86,7 @@ fun InHistoryMediaItemMenu(
 
     if (isHiding) {
         ConfirmationDialog(
-            text = "Do you really hide this song? Its playback time and cache will be wiped.\nThis action is irreversible.",
+            text = "Do you really want to delete this song?",
             onDismiss = { isHiding = false },
             onConfirm = {
                 (onDismiss ?: menuState::hide).invoke()
@@ -520,7 +520,7 @@ fun MediaItemMenu(
                     onHideFromDatabase?.let { onHideFromDatabase ->
                         MenuEntry(
                             icon = R.drawable.trash,
-                            text = "Hide",
+                            text = "Delete",
                             onClick = onHideFromDatabase
                         )
                     }
