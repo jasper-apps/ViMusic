@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -91,7 +93,8 @@ fun PlaylistPreviewItem(
                             modifier = Modifier
                                 .clip(thumbnailShape)
                                 .align(alignment)
-                                .size(thumbnailSize)
+                                .height(53.8.dp)
+                                .width(52.dp)
                         )
                     }
                 }
