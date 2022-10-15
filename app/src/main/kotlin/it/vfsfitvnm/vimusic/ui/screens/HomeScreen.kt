@@ -228,7 +228,7 @@ fun HomeScreen() {
 
                 Row(
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.Bottom,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.3f)
