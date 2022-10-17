@@ -3,14 +3,7 @@ package it.vfsfitvnm.vimusic.ui.views
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -91,10 +84,10 @@ fun PlaylistPreviewItem(
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
+                                .fillMaxWidth(0.5f)
                                 .clip(thumbnailShape)
                                 .align(alignment)
-                                .height(53.8.dp)
-                                .width(52.dp)
+                                .size(thumbnailSize)
                         )
                     }
                 }
