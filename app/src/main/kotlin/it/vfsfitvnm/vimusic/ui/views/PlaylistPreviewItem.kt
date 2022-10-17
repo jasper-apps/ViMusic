@@ -3,12 +3,7 @@ package it.vfsfitvnm.vimusic.ui.views
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -62,7 +57,6 @@ fun PlaylistPreviewItem(
     PlaylistItem(
         name = playlistPreview.playlist.name,
         textColor = Color.White,
-        thumbnailSize = thumbnailSize,
         imageContent = {
             if (thumbnails.toSet().size == 1) {
                 AsyncImage(
@@ -89,9 +83,9 @@ fun PlaylistPreviewItem(
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
+                                .fillMaxSize(0.5f)
                                 .clip(thumbnailShape)
                                 .align(alignment)
-                                .size(thumbnailSize)
                         )
                     }
                 }
@@ -107,11 +101,9 @@ fun BuiltInPlaylistItem(
     colorTint: Color,
     name: String,
     modifier: Modifier = Modifier,
-    thumbnailSize: Dp = Dimensions.thumbnails.song
 ) {
     PlaylistItem(
         name = name,
-        thumbnailSize = thumbnailSize,
         withGradient = false,
         imageContent = {
             Image(
@@ -132,7 +124,6 @@ fun PlaylistItem(
     name: String,
     modifier: Modifier = Modifier,
     textColor: Color? = null,
-    thumbnailSize: Dp = Dimensions.thumbnails.song,
     withGradient: Boolean = true,
     imageContent: @Composable BoxScope.() -> Unit
 ) {
@@ -142,11 +133,11 @@ fun PlaylistItem(
         modifier = modifier
             .clip(thumbnailShape)
             .background(colorPalette.background1)
-            .size(thumbnailSize * 2)
+            .aspectRatio(1f)
     ) {
         Box(
             modifier = Modifier
-                .size(thumbnailSize * 2),
+                .fillMaxSize(),
             content = imageContent
         )
 
