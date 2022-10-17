@@ -57,7 +57,6 @@ fun PlaylistPreviewItem(
     PlaylistItem(
         name = playlistPreview.playlist.name,
         textColor = Color.White,
-        thumbnailSize = thumbnailSize,
         imageContent = {
             if (thumbnails.toSet().size == 1) {
                 AsyncImage(
@@ -84,10 +83,9 @@ fun PlaylistPreviewItem(
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .fillMaxWidth(0.5f)
+                                .fillMaxSize(0.5f)
                                 .clip(thumbnailShape)
                                 .align(alignment)
-                                .size(thumbnailSize)
                         )
                     }
                 }
@@ -103,11 +101,9 @@ fun BuiltInPlaylistItem(
     colorTint: Color,
     name: String,
     modifier: Modifier = Modifier,
-    thumbnailSize: Dp = Dimensions.thumbnails.song
 ) {
     PlaylistItem(
         name = name,
-        thumbnailSize = thumbnailSize,
         withGradient = false,
         imageContent = {
             Image(
@@ -128,7 +124,6 @@ fun PlaylistItem(
     name: String,
     modifier: Modifier = Modifier,
     textColor: Color? = null,
-    thumbnailSize: Dp = Dimensions.thumbnails.song,
     withGradient: Boolean = true,
     imageContent: @Composable BoxScope.() -> Unit
 ) {
@@ -138,11 +133,11 @@ fun PlaylistItem(
         modifier = modifier
             .clip(thumbnailShape)
             .background(colorPalette.background1)
-            .size(thumbnailSize * 2)
+            .aspectRatio(1f)
     ) {
         Box(
             modifier = Modifier
-                .size(thumbnailSize * 2),
+                .fillMaxSize(),
             content = imageContent
         )
 
