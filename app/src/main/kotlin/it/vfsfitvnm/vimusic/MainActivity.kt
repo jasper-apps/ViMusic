@@ -59,6 +59,7 @@ import it.vfsfitvnm.vimusic.enums.ThumbnailRoundness
 import it.vfsfitvnm.vimusic.service.PlayerService
 import it.vfsfitvnm.vimusic.ui.components.BottomSheetMenu
 import it.vfsfitvnm.vimusic.ui.components.LocalMenuState
+import it.vfsfitvnm.vimusic.ui.components.MenuState
 import it.vfsfitvnm.vimusic.ui.components.collapsedAnchor
 import it.vfsfitvnm.vimusic.ui.components.dismissedAnchor
 import it.vfsfitvnm.vimusic.ui.components.expandedAnchor
@@ -112,11 +113,6 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         unbindService(serviceConnection)
         super.onStop()
-    }
-
-    override fun onDestroy() {
-        unbindService(serviceConnection)
-        super.onDestroy()
     }
 
     @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
@@ -327,7 +323,8 @@ class MainActivity : ComponentActivity() {
                     LocalRippleTheme provides rippleTheme,
                     LocalShimmerTheme provides shimmerTheme,
                     LocalPlayerServiceBinder provides binder,
-                    LocalPlayerAwarePaddingValues provides playerAwarePaddingValues
+                    LocalPlayerAwarePaddingValues provides playerAwarePaddingValues,
+                    LocalMenuState provides MenuState()
                 ) {
                     when (val uri = uri) {
                         null -> {
