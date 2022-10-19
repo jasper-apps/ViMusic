@@ -29,7 +29,8 @@ import it.vfsfitvnm.youtubemusic.models.ThumbnailRenderer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import okhttp3.logging.HttpLoggingInterceptor
+import io.ktor.client.plugins.compression.ContentEncoding
+import io.ktor.client.plugins.compression.brotli
 
 @OptIn(ExperimentalSerializationApi::class)
 object YouTube {
@@ -48,10 +49,8 @@ object YouTube {
             })
         }
 
-        engine {
-            val loggingInterceptor = HttpLoggingInterceptor()
-            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-            addInterceptor(loggingInterceptor)
+        install(ContentEncoding) {
+            brotli()
         }
 
         defaultRequest {

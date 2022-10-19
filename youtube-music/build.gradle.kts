@@ -18,7 +18,6 @@ dependencies {
     implementation(libs.ktor.client.encoding)
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.serialization.json)
-    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
     testImplementation(testLibs.junit)
 }
