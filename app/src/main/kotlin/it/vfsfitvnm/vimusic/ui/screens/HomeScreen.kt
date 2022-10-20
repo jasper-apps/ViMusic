@@ -359,12 +359,8 @@ fun HomeScreen() {
                                     playlistPreview = item.playlistPreview,
                                     modifier = Modifier
                                         .animateItemPlacement()
-                                        .padding(all = 8.dp)
-                                        .clickable(
-                                            indication = rememberRipple(bounded = true),
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            onClick = { localPlaylistRoute(item.playlistPreview.playlist.id) }
-                                        )
+                                        .padding(all = 8.dp),
+                                    onClick = { localPlaylistRoute(item.playlistPreview.playlist.id) }
                                 )
                                 FavoritePlaylistItem -> BuiltInPlaylistItem(
                                     icon = R.drawable.heart,
@@ -372,12 +368,9 @@ fun HomeScreen() {
                                     name = item.title,
                                     modifier = Modifier
                                         .animateItemPlacement()
-                                        .padding(all = 8.dp)
-                                        .clickable(
-                                            indication = rememberRipple(bounded = true),
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            onClick = { builtInPlaylistRoute(BuiltInPlaylist.Favorites) }
-                                        )
+                                        .padding(all = 8.dp),
+
+                                    onClick = { builtInPlaylistRoute(BuiltInPlaylist.Favorites)}
                                 )
                                 OfflinePlaylistItem -> BuiltInPlaylistItem(
                                     icon = R.drawable.airplane,
@@ -385,12 +378,8 @@ fun HomeScreen() {
                                     name = item.title,
                                     modifier = Modifier
                                         .animateItemPlacement()
-                                        .padding(all = 8.dp)
-                                        .clickable(
-                                            indication = rememberRipple(bounded = true),
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            onClick = { builtInPlaylistRoute(BuiltInPlaylist.Offline) }
-                                        )
+                                        .padding(all = 8.dp),
+                                    onClick = { builtInPlaylistRoute(BuiltInPlaylist.Offline) }
                                 )
                             }
                         }
