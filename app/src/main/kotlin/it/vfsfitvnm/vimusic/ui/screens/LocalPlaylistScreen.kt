@@ -140,10 +140,11 @@ fun LocalPlaylistScreen(playlistId: Long) {
                     .background(colorPalette.background0)
                     .fillMaxSize()
             ) {
-                item {
+                stickyHeader {
                     Column {
                         TopAppBar(
                             modifier = Modifier
+                                .background(colorPalette.background0)
                                 .height(52.dp)
                         ) {
                             Image(
@@ -159,6 +160,8 @@ fun LocalPlaylistScreen(playlistId: Long) {
 
                         Column(
                             modifier = Modifier
+                                .background(colorPalette.background0)
+                                .fillMaxWidth()
                                 .padding(top = 16.dp, bottom = 8.dp)
                                 .padding(horizontal = 16.dp)
                         ) {
@@ -177,6 +180,7 @@ fun LocalPlaylistScreen(playlistId: Long) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End,
                             modifier = Modifier
+                                .background(colorPalette.background0)
                                 .fillMaxWidth()
                                 .zIndex(1f)
                                 .padding(horizontal = 8.dp)
@@ -283,7 +287,6 @@ fun LocalPlaylistScreen(playlistId: Long) {
                         }
                     }
                 }
-
                 itemsIndexed(
                     items = playlistWithSongs.songs,
                     key = { _, song -> song.id },
