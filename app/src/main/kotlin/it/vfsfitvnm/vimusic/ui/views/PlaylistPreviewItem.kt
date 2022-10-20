@@ -143,8 +143,6 @@ fun PlaylistItem(
             .clickable(
                 onClick = onClick
             )
-
-
     ) {
         Box(
             modifier = Modifier
