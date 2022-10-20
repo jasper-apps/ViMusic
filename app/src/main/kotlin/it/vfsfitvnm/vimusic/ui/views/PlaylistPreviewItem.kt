@@ -3,6 +3,7 @@ package it.vfsfitvnm.vimusic.ui.views
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -37,7 +38,8 @@ import kotlinx.coroutines.flow.map
 fun PlaylistPreviewItem(
     playlistPreview: PlaylistPreview,
     modifier: Modifier = Modifier,
-    thumbnailSize: Dp = Dimensions.thumbnails.song
+    thumbnailSize: Dp = Dimensions.thumbnails.song,
+    onClick: () -> Unit
 ) {
     val density = LocalDensity.current
     val (_, _, thumbnailShape) = LocalAppearance.current
@@ -91,7 +93,8 @@ fun PlaylistPreviewItem(
                 }
             }
         },
-        modifier = modifier
+        modifier = modifier,
+        onClick = onClick
     )
 }
 
@@ -101,6 +104,7 @@ fun BuiltInPlaylistItem(
     colorTint: Color,
     name: String,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     PlaylistItem(
         name = name,
@@ -116,6 +120,7 @@ fun BuiltInPlaylistItem(
             )
         },
         modifier = modifier,
+        onClick = onClick
     )
 }
 
@@ -125,7 +130,8 @@ fun PlaylistItem(
     modifier: Modifier = Modifier,
     textColor: Color? = null,
     withGradient: Boolean = true,
-    imageContent: @Composable BoxScope.() -> Unit
+    imageContent: @Composable BoxScope.() -> Unit,
+    onClick: () -> Unit
 ) {
     val (colorPalette, typography, thumbnailShape) = LocalAppearance.current
 
@@ -134,6 +140,11 @@ fun PlaylistItem(
             .clip(thumbnailShape)
             .background(colorPalette.background1)
             .aspectRatio(1f)
+            .clickable(
+                onClick = onClick
+            )
+
+
     ) {
         Box(
             modifier = Modifier
