@@ -147,16 +147,6 @@ fun NonQueuedMediaItemMenu(
     BaseMediaItemMenu(
         mediaItem = mediaItem,
         onDismiss = onDismiss ?: menuState::hide,
-        onStartRadio = {
-            binder?.stopRadio()
-            binder?.player?.forcePlay(mediaItem)
-            binder?.setupRadio(
-                NavigationEndpoint.Endpoint.Watch(
-                    videoId = mediaItem.mediaId,
-                    playlistId = mediaItem.mediaMetadata.extras?.getString("playlistId")
-                )
-            )
-        },
         onDownload = {
             coroutineScope.launch {
                 val uri = BuildMediaUrl(mediaItem)
@@ -217,7 +207,6 @@ fun BaseMediaItemMenu(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     onDownload: (() -> Unit)? = null,
-    onStartRadio: (() -> Unit)? = null,
     onPlayNext: (() -> Unit)? = null,
     onEnqueue: (() -> Unit)? = null,
     onRemoveFromQueue: (() -> Unit)? = null,
@@ -232,7 +221,6 @@ fun BaseMediaItemMenu(
         mediaItem = mediaItem,
         onDismiss = onDismiss,
         onDownload = onDownload,
-        onStartRadio = onStartRadio,
         onPlayNext = onPlayNext,
         onEnqueue = onEnqueue,
         onAddToPlaylist = { playlist, position ->
@@ -268,7 +256,6 @@ fun MediaItemMenu(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     onDownload: (() -> Unit)? = null,
-    onStartRadio: (() -> Unit)? = null,
     onPlayNext: (() -> Unit)? = null,
     onEnqueue: (() -> Unit)? = null,
     onHideFromDatabase: (() -> Unit)? = null,
@@ -377,17 +364,6 @@ fun MediaItemMenu(
                             detectTapGestures { }
                         }
                 ) {
-                    onStartRadio?.let { onStartRadio ->
-                        MenuEntry(
-                            icon = R.drawable.radio,
-                            text = "Start radio",
-                            onClick = {
-                                onDismiss()
-                                onStartRadio()
-                            }
-                        )
-                    }
-
                     val chunkLength = 512 * 1024L
                     if (onDownload != null && !context.globalCache.isCached(
                             mediaItem.mediaId,
