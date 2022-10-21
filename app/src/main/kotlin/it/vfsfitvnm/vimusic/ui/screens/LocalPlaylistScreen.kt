@@ -36,7 +36,6 @@ import it.vfsfitvnm.reordering.rememberReorderingState
 import it.vfsfitvnm.reordering.reorder
 import it.vfsfitvnm.route.RouteHandler
 import it.vfsfitvnm.vimusic.Database
-import it.vfsfitvnm.vimusic.LocalPlayerAwarePaddingValues
 import it.vfsfitvnm.vimusic.LocalPlayerServiceBinder
 import it.vfsfitvnm.vimusic.R
 import it.vfsfitvnm.vimusic.models.DetailedSong
@@ -56,7 +55,6 @@ import it.vfsfitvnm.vimusic.ui.styling.LocalAppearance
 import it.vfsfitvnm.vimusic.ui.styling.px
 import it.vfsfitvnm.vimusic.ui.views.SongItem
 import it.vfsfitvnm.vimusic.utils.asMediaItem
-import it.vfsfitvnm.vimusic.utils.enqueue
 import it.vfsfitvnm.vimusic.utils.forcePlayAtIndex
 import it.vfsfitvnm.vimusic.utils.forcePlayFromBeginning
 import it.vfsfitvnm.vimusic.utils.secondary
@@ -132,18 +130,18 @@ fun LocalPlaylistScreen(playlistId: Long) {
                     }
                 )
             }
-
             ReorderingLazyColumn(
                 reorderingState = reorderingState,
-                contentPadding = LocalPlayerAwarePaddingValues.current,
                 modifier = Modifier
                     .background(colorPalette.background0)
                     .fillMaxSize()
             ) {
-                item {
+                stickyHeader {
                     Column {
                         TopAppBar(
                             modifier = Modifier
+                                .background(colorPalette.background0)
+                                .padding(top = 16.dp)
                                 .height(52.dp)
                         ) {
                             Image(
@@ -159,7 +157,9 @@ fun LocalPlaylistScreen(playlistId: Long) {
 
                         Column(
                             modifier = Modifier
-                                .padding(top = 16.dp, bottom = 8.dp)
+                                .background(colorPalette.background0)
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 8.dp)
                                 .padding(horizontal = 16.dp)
                         ) {
                             BasicText(
@@ -177,9 +177,10 @@ fun LocalPlaylistScreen(playlistId: Long) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End,
                             modifier = Modifier
+                                .background(colorPalette.background0)
                                 .fillMaxWidth()
                                 .zIndex(1f)
-                                .padding(horizontal = 8.dp)
+                                .padding(horizontal = 8.dp, vertical = 8.dp)
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.shuffle),
@@ -283,7 +284,6 @@ fun LocalPlaylistScreen(playlistId: Long) {
                         }
                     }
                 }
-
                 itemsIndexed(
                     items = playlistWithSongs.songs,
                     key = { _, song -> song.id },
