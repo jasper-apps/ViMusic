@@ -355,13 +355,6 @@ fun PlayerView(
 
                                     BaseMediaItemMenu(
                                         mediaItem = mediaItem,
-                                        onStartRadio = {
-                                            binder.stopRadio()
-                                            binder.player.seamlessPlay(mediaItem)
-                                            binder.setupRadio(
-                                                NavigationEndpoint.Endpoint.Watch(videoId = mediaItem.mediaId)
-                                            )
-                                        },
                                         onDownload = {
                                             coroutineScope.launch {
                                                 val uri = BuildMediaUrl(mediaItem)
