@@ -141,7 +141,8 @@ fun LocalPlaylistScreen(playlistId: Long) {
                         TopAppBar(
                             modifier = Modifier
                                 .background(colorPalette.background0)
-                                .height(72.dp)
+                                .padding(top = 16.dp)
+                                .height(52.dp)
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.chevron_back),
