@@ -36,7 +36,6 @@ import it.vfsfitvnm.reordering.rememberReorderingState
 import it.vfsfitvnm.reordering.reorder
 import it.vfsfitvnm.route.RouteHandler
 import it.vfsfitvnm.vimusic.Database
-import it.vfsfitvnm.vimusic.LocalPlayerAwarePaddingValues
 import it.vfsfitvnm.vimusic.LocalPlayerServiceBinder
 import it.vfsfitvnm.vimusic.R
 import it.vfsfitvnm.vimusic.models.DetailedSong
@@ -56,7 +55,6 @@ import it.vfsfitvnm.vimusic.ui.styling.LocalAppearance
 import it.vfsfitvnm.vimusic.ui.styling.px
 import it.vfsfitvnm.vimusic.ui.views.SongItem
 import it.vfsfitvnm.vimusic.utils.asMediaItem
-import it.vfsfitvnm.vimusic.utils.enqueue
 import it.vfsfitvnm.vimusic.utils.forcePlayAtIndex
 import it.vfsfitvnm.vimusic.utils.forcePlayFromBeginning
 import it.vfsfitvnm.vimusic.utils.secondary
@@ -132,10 +130,8 @@ fun LocalPlaylistScreen(playlistId: Long) {
                     }
                 )
             }
-
             ReorderingLazyColumn(
                 reorderingState = reorderingState,
-                contentPadding = LocalPlayerAwarePaddingValues.current,
                 modifier = Modifier
                     .background(colorPalette.background0)
                     .fillMaxSize()
@@ -145,7 +141,7 @@ fun LocalPlaylistScreen(playlistId: Long) {
                         TopAppBar(
                             modifier = Modifier
                                 .background(colorPalette.background0)
-                                .height(52.dp)
+                                .height(72.dp)
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.chevron_back),
@@ -183,7 +179,7 @@ fun LocalPlaylistScreen(playlistId: Long) {
                                 .background(colorPalette.background0)
                                 .fillMaxWidth()
                                 .zIndex(1f)
-                                .padding(horizontal = 8.dp)
+                                .padding(horizontal = 8.dp, vertical = 8.dp)
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.shuffle),
