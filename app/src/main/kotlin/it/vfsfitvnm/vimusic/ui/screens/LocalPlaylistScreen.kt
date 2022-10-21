@@ -159,7 +159,7 @@ fun LocalPlaylistScreen(playlistId: Long) {
                             modifier = Modifier
                                 .background(colorPalette.background0)
                                 .fillMaxWidth()
-                                .padding(top = 16.dp, bottom = 8.dp)
+                                .padding(top = 8.dp, bottom = 8.dp)
                                 .padding(horizontal = 16.dp)
                         ) {
                             BasicText(
