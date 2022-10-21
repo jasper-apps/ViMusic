@@ -16,7 +16,7 @@ data class GetSearchSuggestionsResponse(
         ) {
             @Serializable
             data class Content(
-                val searchSuggestionRenderer: SearchSuggestionRenderer
+                val searchSuggestionRenderer: SearchSuggestionRenderer?
             ) {
                 @Serializable
                 data class SearchSuggestionRenderer(

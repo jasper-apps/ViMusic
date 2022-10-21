@@ -4,8 +4,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.BrowserUserAgent
-import io.ktor.client.plugins.compression.ContentEncoding
-import io.ktor.client.plugins.compression.brotli
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
@@ -31,6 +29,8 @@ import it.vfsfitvnm.youtubemusic.models.ThumbnailRenderer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import io.ktor.client.plugins.compression.ContentEncoding
+import io.ktor.client.plugins.compression.brotli
 
 @OptIn(ExperimentalSerializationApi::class)
 object YouTube {
@@ -473,8 +473,8 @@ object YouTube {
                         .contents.mapNotNull {
                             it
                                 .searchSuggestionRenderer
-                                .navigationEndpoint
-                                .searchEndpoint
+                                ?.navigationEndpoint
+                                ?.searchEndpoint
                                 ?.query
                         }
                 }
