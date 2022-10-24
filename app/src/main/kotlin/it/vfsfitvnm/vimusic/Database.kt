@@ -223,8 +223,8 @@ interface Database {
     @Query("SELECT loudnessDb FROM Format WHERE songId = :songId")
     fun loudnessDb(songId: String): Flow<Float?>
 
-    @Query("UPDATE Format SET isDownloaded = true WHERE isDownloaded = false")
-    fun markDownloaded()
+    @Query("UPDATE Format SET isDownloaded = true WHERE songId = :id")
+    fun markDownloaded(id: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(format: Format)

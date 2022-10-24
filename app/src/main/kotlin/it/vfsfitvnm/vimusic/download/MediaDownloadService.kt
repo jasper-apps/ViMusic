@@ -48,7 +48,7 @@ class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
             ) {
                 if(download.bytesDownloaded == download.contentLength) {
                     query {
-                        Database.markDownloaded()
+                        Database.markDownloaded(download.request.id)
                     }
                 }
             }
