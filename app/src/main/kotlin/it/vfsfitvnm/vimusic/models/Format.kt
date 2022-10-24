@@ -25,5 +25,5 @@ data class Format(
     val contentLength: Long? = null,
     val lastModified: Long? = null,
     val loudnessDb: Float? = null,
-    @ColumnInfo("isDownloaded",  defaultValue = "false") val isDownloaded: Boolean
+    @ColumnInfo("isDownloaded",  defaultValue = "0") val isDownloaded: Boolean
 )
