@@ -93,7 +93,7 @@ fun InHistoryMediaItemMenu(
                 query {
                     // Not sure we can to this here
                     context.globalCache.removeResource(song.id)
-                    Database.unMarkDownloaded(song.id)
+                    Database.markDownloaded(song.id, false)
                     Database.incrementTotalPlayTimeMs(song.id, -song.totalPlayTimeMs)
                 }
             }

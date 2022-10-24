@@ -117,9 +117,6 @@ interface Database {
     @Query("SELECT COUNT (*) FROM SearchQuery")
     fun queriesCount(): Flow<Int>
 
-    @Query("UPDATE Format SET isDownloaded = false WHERE songId = :id")
-    fun unMarkDownloaded(id: String)
-
     @Query("DELETE FROM SearchQuery")
     fun clearQueries()
 
@@ -202,7 +199,7 @@ interface Database {
     fun format(songId: String): Flow<Format>
 
     @Query("SELECT * FROM Song JOIN Format ON id = songId WHERE isDownloaded = true ORDER BY Song.ROWID DESC")
-    fun getDownloadedSongs() : Flow<List<DetailedSong>>
+    fun getDownloadedSongs() : Flow<List<DetailedSongWithContentLength>>
 
     @Transaction
     @Query("SELECT * FROM Song JOIN Format ON id = songId WHERE contentLength IS NOT NULL ORDER BY Song.ROWID DESC")
@@ -226,8 +223,8 @@ interface Database {
     @Query("SELECT loudnessDb FROM Format WHERE songId = :songId")
     fun loudnessDb(songId: String): Flow<Float?>
 
-    @Query("UPDATE Format SET isDownloaded = true WHERE songId = :id")
-    fun markDownloaded(id: String)
+    @Query("UPDATE Format SET isDownloaded = :downloaded WHERE songId = :songId")
+    fun markDownloaded(songId: String, downloaded: Boolean)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(format: Format)
