@@ -304,8 +304,8 @@ interface Database {
         }
     }
 
-    @Query("UPDATE Format SET isDownloaded = 1")
-    fun update()
+    @Query("UPDATE Format SET isDownloaded = true")
+    fun markdownDownloaded()
 
     @Update
     fun update(song: Song)

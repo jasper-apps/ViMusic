@@ -46,10 +46,9 @@ class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
                 download: Download,
                 finalException: Exception?
             ) {
-                if((download.bytesDownloaded.div(download.contentLength)).toInt() == 1) {
+                if(download.bytesDownloaded == download.contentLength) {
                     query {
-                        Database.clearQueue()
-                        Database.update()
+                        Database.markdownDownloaded()
                     }
                 }
             }

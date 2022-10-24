@@ -212,7 +212,8 @@ fun StatsForNerds(
                                                             bitrate = format.bitrate,
                                                             loudnessDb = response.playerConfig?.audioConfig?.loudnessDb?.toFloat(),
                                                             contentLength = format.contentLength,
-                                                            lastModified = format.lastModified
+                                                            lastModified = format.lastModified,
+                                                            isDownloaded = false
                                                         )
                                                     }
                                             }

@@ -27,7 +27,8 @@ suspend fun BuildMediaUrl(mediaItem: MediaItem): Result<Uri> {
                                 bitrate = format.bitrate,
                                 loudnessDb = body.playerConfig?.audioConfig?.loudnessDb?.toFloat(),
                                 contentLength = format.contentLength,
-                                lastModified = format.lastModified
+                                lastModified = format.lastModified,
+                                isDownloaded = false
                             )
                         )
                     }
