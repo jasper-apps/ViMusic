@@ -71,13 +71,7 @@ fun BuiltInPlaylistScreen(builtInPlaylist: BuiltInPlaylist) {
             val songs by remember(context.globalCache, builtInPlaylist) {
                 when (builtInPlaylist) {
                     BuiltInPlaylist.Favorites -> Database.favorites()
-                    BuiltInPlaylist.Offline -> Database.songsWithContentLength().map { songs ->
-                        songs.filter { song ->
-                            song.contentLength?.let {
-                                context.globalCache.isCached(song.id, 0, song.contentLength)
-                            } ?: false
-                        }
-                    }
+                    BuiltInPlaylist.Offline -> Database.getDownloadedSongs()
                 }
             }.collectAsState(initial = emptyList(), context = Dispatchers.IO)
 

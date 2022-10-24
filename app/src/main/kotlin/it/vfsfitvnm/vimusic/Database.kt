@@ -198,6 +198,9 @@ interface Database {
     @Query("SELECT * FROM Format WHERE songId = :songId")
     fun format(songId: String): Flow<Format>
 
+    @Query("SELECT * FROM Song JOIN Format ON id = songId WHERE isDownloaded = true ORDER BY Song.ROWID DESC")
+    fun getDownloadedSongs() : Flow<List<DetailedSong>>
+
     @Transaction
     @Query("SELECT * FROM Song JOIN Format ON id = songId WHERE contentLength IS NOT NULL ORDER BY Song.ROWID DESC")
     @RewriteQueriesToDropUnusedColumns
