@@ -520,7 +520,7 @@ abstract class DatabaseInitializer protected constructor() : RoomDatabase() {
 
     class From17To18Migration : Migration(17, 18) {
         override fun migrate(it: SupportSQLiteDatabase) {
-            it.execSQL("ALTER TABLE Format ADD isDownloaded BOOLEAN DEFAULT 'FALSE';")
+            it.execSQL("ALTER TABLE Format ADD isDownloaded INTEGER NOT NULL DEFAULT '0';")
         }
     }
 }
