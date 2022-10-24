@@ -4,16 +4,16 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.DownloadManager
 import androidx.media3.exoplayer.offline.DownloadService
-import androidx.media3.exoplayer.scheduler.Requirements
+import it.vfsfitvnm.vimusic.Database
 import androidx.media3.exoplayer.scheduler.Scheduler
 import it.vfsfitvnm.vimusic.R
+import it.vfsfitvnm.vimusic.query
 import it.vfsfitvnm.vimusic.utils.globalCache
 import java.util.concurrent.Executors
 
@@ -41,51 +41,17 @@ class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
         )
         downloadManager.maxParallelDownloads = 9999
         downloadManager.addListener(object : DownloadManager.Listener {
-            val TAG = "info23"
-
-            override fun onInitialized(downloadManager: DownloadManager) {
-                Log.i(TAG, "onInitialized: ")
-            }
-
-            override fun onDownloadsPausedChanged(
-                downloadManager: DownloadManager,
-                downloadsPaused: Boolean
-            ) {
-                Log.i(TAG, "onDownloadsPausedChanged: ")
-            }
-
             override fun onDownloadChanged(
                 downloadManager: DownloadManager,
                 download: Download,
                 finalException: Exception?
             ) {
-                Log.i(
-                    TAG,
-                    "onDownloadChanged: ${download.request.id}: ${download.bytesDownloaded} / ${download.contentLength}"
-                )
-            }
-
-            override fun onDownloadRemoved(downloadManager: DownloadManager, download: Download) {
-                Log.i(TAG, "onDownloadRemoved: ${download.request.id}")
-            }
-
-            override fun onIdle(downloadManager: DownloadManager) {
-                Log.i(TAG, "onIdle: ")
-            }
-
-            override fun onRequirementsStateChanged(
-                downloadManager: DownloadManager,
-                requirements: Requirements,
-                notMetRequirements: Int
-            ) {
-                Log.i(TAG, "onRequirementsStateChanged: ")
-            }
-
-            override fun onWaitingForRequirementsChanged(
-                downloadManager: DownloadManager,
-                waitingForRequirements: Boolean
-            ) {
-                Log.i(TAG, "onWaitingForRequirementsChanged: ")
+                if((download.bytesDownloaded.div(download.contentLength)).toInt() == 1) {
+                    query {
+                        Database.clearQueue()
+                        Database.update()
+                    }
+                }
             }
         })
 

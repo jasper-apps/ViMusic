@@ -304,6 +304,9 @@ interface Database {
         }
     }
 
+    @Query("UPDATE Format SET isDownloaded = 1")
+    fun update()
+
     @Update
     fun update(song: Song)
 
@@ -393,7 +396,8 @@ abstract class DatabaseInitializer protected constructor() : RoomDatabase() {
                     .addMigrations(
                         From8To9Migration(),
                         From10To11Migration(),
-                        From14To15Migration()
+                        From14To15Migration(),
+                        From15To16Migration()
                     )
                     .build()
             }
@@ -507,6 +511,12 @@ abstract class DatabaseInitializer protected constructor() : RoomDatabase() {
             it.execSQL("INSERT INTO Song_new(id, title, artistsText, durationText, thumbnailUrl, lyrics, likedAt, totalPlayTimeMs) SELECT id, title, artistsText, durationText, thumbnailUrl, lyrics, likedAt, totalPlayTimeMs FROM Song;")
             it.execSQL("DROP TABLE Song;")
             it.execSQL("ALTER TABLE Song_new RENAME TO Song;")
+        }
+    }
+
+    class From15To16Migration : Migration(15, 16) {
+        override fun migrate(it: SupportSQLiteDatabase) {
+            it.execSQL("ALTER TABLE Format ADD isDownloaded BOOLEAN DEFAULT 'FALSE';")
         }
     }
 }
