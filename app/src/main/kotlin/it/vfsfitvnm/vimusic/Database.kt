@@ -117,6 +117,9 @@ interface Database {
     @Query("SELECT COUNT (*) FROM SearchQuery")
     fun queriesCount(): Flow<Int>
 
+    @Query("UPDATE Format SET isDownloaded = false WHERE songId = :id")
+    fun unMarkDownloaded(id: String)
+
     @Query("DELETE FROM SearchQuery")
     fun clearQueries()
 
