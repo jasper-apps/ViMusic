@@ -366,7 +366,7 @@ interface Database {
     views = [
         SortedSongPlaylistMap::class
     ],
-    version = 17,
+    version = 18,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -400,7 +400,7 @@ abstract class DatabaseInitializer protected constructor() : RoomDatabase() {
                         From8To9Migration(),
                         From10To11Migration(),
                         From14To15Migration(),
-                        From15To16Migration()
+                        From17To18Migration()
                     )
                     .build()
             }
@@ -517,7 +517,7 @@ abstract class DatabaseInitializer protected constructor() : RoomDatabase() {
         }
     }
 
-    class From15To16Migration : Migration(15, 16) {
+    class From17To18Migration : Migration(17, 18) {
         override fun migrate(it: SupportSQLiteDatabase) {
             it.execSQL("ALTER TABLE Format ADD isDownloaded BOOLEAN DEFAULT 'FALSE';")
         }
