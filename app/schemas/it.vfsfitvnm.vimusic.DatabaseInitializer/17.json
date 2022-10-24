@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 18,
+    "version": 17,
     "identityHash": "5736782bbf23d9fa2733e7e5739087ae",
     "entities": [
       {
@@ -560,13 +560,6 @@
             "columnName": "loudnessDb",
             "affinity": "REAL",
             "notNull": false
-          },
-          {
-            "fieldPath": "isDownloaded",
-            "columnName": "isDownloaded",
-            "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "0"
           }
         ],
         "primaryKey": {
