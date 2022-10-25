@@ -225,6 +225,7 @@ class CustomDownloadNotificationHelper(context: Context, channelId: String) {
         notificationBuilder.setProgress(maxProgress, currentProgress, indeterminateProgress)
         notificationBuilder.setOngoing(ongoing)
         notificationBuilder.setShowWhen(showWhen)
+        notificationBuilder.setOnlyAlertOnce(true)
         notificationBuilder.foregroundServiceBehavior =
             NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
         return notificationBuilder.build()
