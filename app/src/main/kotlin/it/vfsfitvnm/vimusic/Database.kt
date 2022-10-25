@@ -46,6 +46,7 @@ import it.vfsfitvnm.vimusic.models.SongAlbumMap
 import it.vfsfitvnm.vimusic.models.SongArtistMap
 import it.vfsfitvnm.vimusic.models.SongPlaylistMap
 import it.vfsfitvnm.vimusic.models.SortedSongPlaylistMap
+import it.vfsfitvnm.vimusic.utils.globalCache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -401,7 +402,7 @@ abstract class DatabaseInitializer protected constructor() : RoomDatabase() {
                         From8To9Migration(),
                         From10To11Migration(),
                         From14To15Migration(),
-                        From17To18Migration()
+                        From17To18Migration(this@Context)
                     )
                     .build()
             }
@@ -518,9 +519,20 @@ abstract class DatabaseInitializer protected constructor() : RoomDatabase() {
         }
     }
 
-    class From17To18Migration : Migration(17, 18) {
+    class From17To18Migration(val context: Context) : Migration(17, 18) {
         override fun migrate(it: SupportSQLiteDatabase) {
             it.execSQL("ALTER TABLE Format ADD isDownloaded INTEGER NOT NULL DEFAULT 0;")
+            it.query(SimpleSQLiteQuery("SELECT songId, contentLength FROM Format;")) .use { cursor ->
+                val formatValues = ContentValues(1)
+                formatValues.put("isDownloaded", true)
+                while (cursor.moveToNext()) {
+                    if (context.globalCache.isCached(cursor.getString(0),0,cursor.getLong(1))) {
+                        it.update("Format", CONFLICT_IGNORE, formatValues,"songId = ?",
+                            arrayOf(cursor.getString(0))
+                        )
+                    }
+                }
+            }
         }
     }
 }
