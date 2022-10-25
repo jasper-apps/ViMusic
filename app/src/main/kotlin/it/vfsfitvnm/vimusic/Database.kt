@@ -200,14 +200,15 @@ interface Database {
     fun format(songId: String): Flow<Format>
 
     @Query("SELECT * FROM Song JOIN Format ON id = songId WHERE isDownloaded = true ORDER BY Song.ROWID DESC")
-    fun getDownloadedSongs() : Flow<List<DetailedSongWithContentLength>>
+    fun getDownloadedSongs(): Flow<List<DetailedSongWithContentLength>>
 
     @Transaction
     @Query("SELECT * FROM Song JOIN Format ON id = songId WHERE contentLength IS NOT NULL ORDER BY Song.ROWID DESC")
     @RewriteQueriesToDropUnusedColumns
     fun songsWithContentLength(): Flow<List<DetailedSongWithContentLength>>
 
-    @Query("""
+    @Query(
+        """
         UPDATE SongPlaylistMap SET position = 
           CASE 
             WHEN position < :fromPosition THEN position + 1
@@ -215,7 +216,8 @@ interface Database {
             ELSE :toPosition
           END 
         WHERE playlistId = :playlistId AND position BETWEEN MIN(:fromPosition,:toPosition) and MAX(:fromPosition,:toPosition)
-    """)
+    """
+    )
     fun move(playlistId: Long, fromPosition: Int, toPosition: Int)
 
     @Query("DELETE FROM SongPlaylistMap WHERE playlistId = :id")
@@ -383,7 +385,7 @@ interface Database {
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 15, to = 16),
         AutoMigration(from = 16, to = 17),
-        AutoMigration(from  = 17, to = 18)
+        AutoMigration(from = 17, to = 18)
     ],
 )
 @TypeConverters(Converters::class)
@@ -522,12 +524,13 @@ abstract class DatabaseInitializer protected constructor() : RoomDatabase() {
     class From17To18Migration(val context: Context) : Migration(17, 18) {
         override fun migrate(it: SupportSQLiteDatabase) {
             it.execSQL("ALTER TABLE Format ADD isDownloaded INTEGER NOT NULL DEFAULT 0;")
-            it.query(SimpleSQLiteQuery("SELECT songId, contentLength FROM Format;")) .use { cursor ->
+            it.query(SimpleSQLiteQuery("SELECT songId, contentLength FROM Format;")).use { cursor ->
                 val formatValues = ContentValues(1)
                 formatValues.put("isDownloaded", true)
                 while (cursor.moveToNext()) {
-                    if (context.globalCache.isCached(cursor.getString(0),0,cursor.getLong(1))) {
-                        it.update("Format", CONFLICT_IGNORE, formatValues,"songId = ?",
+                    if (context.globalCache.isCached(cursor.getString(0), 0, cursor.getLong(1))) {
+                        it.update(
+                            "Format", CONFLICT_IGNORE, formatValues, "songId = ?",
                             arrayOf(cursor.getString(0))
                         )
                     }
