@@ -76,7 +76,6 @@ fun BuiltInPlaylistScreen(builtInPlaylist: BuiltInPlaylist) {
                             song.contentLength?.let {
                                 context.globalCache.isCached(song.id, 0, song.contentLength)
                             } ?: false
-
                         }
                     }
                 }
