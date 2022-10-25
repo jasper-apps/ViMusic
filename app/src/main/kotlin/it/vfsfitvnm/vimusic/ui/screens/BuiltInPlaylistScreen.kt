@@ -71,7 +71,7 @@ fun BuiltInPlaylistScreen(builtInPlaylist: BuiltInPlaylist) {
             val songs by remember(context.globalCache, builtInPlaylist) {
                 when (builtInPlaylist) {
                     BuiltInPlaylist.Favorites -> Database.favorites()
-                    BuiltInPlaylist.Offline -> Database.songsWithContentLength().map { songs ->
+                    BuiltInPlaylist.Offline -> Database.getDownloadedSongs().map { songs ->
                         songs.filter { song ->
                             song.contentLength?.let {
                                 context.globalCache.isCached(song.id, 0, song.contentLength)

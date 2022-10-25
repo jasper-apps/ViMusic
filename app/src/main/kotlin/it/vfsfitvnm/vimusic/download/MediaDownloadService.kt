@@ -10,8 +10,10 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.DownloadManager
 import androidx.media3.exoplayer.offline.DownloadService
+import it.vfsfitvnm.vimusic.Database
 import androidx.media3.exoplayer.scheduler.Scheduler
 import it.vfsfitvnm.vimusic.R
+import it.vfsfitvnm.vimusic.query
 import it.vfsfitvnm.vimusic.utils.globalCache
 import java.util.concurrent.Executors
 
@@ -30,13 +32,29 @@ class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
 
         val dataSourceFactory = DefaultHttpDataSource.Factory()
 
-        return DownloadManager(
+        val downloadManager = DownloadManager(
             this,
             databaseProvider,
             globalCache,
             dataSourceFactory,
             executor
         )
+        downloadManager.maxParallelDownloads = 9999
+        downloadManager.addListener(object : DownloadManager.Listener {
+            override fun onDownloadChanged(
+                downloadManager: DownloadManager,
+                download: Download,
+                finalException: Exception?
+            ) {
+                if(download.bytesDownloaded == download.contentLength) {
+                    query {
+                        Database.markDownloaded(download.request.id, true)
+                    }
+                }
+            }
+        })
+
+        return downloadManager
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -64,7 +82,17 @@ class MediaDownloadService : DownloadService(DOWNLOAD_NOTIFICATION_ID) {
                 .toInt() / size
         }
 
+        val isError = downloads.any {
+            it.state == Download.STATE_FAILED
+        }
+
         val notification = when {
+            isError -> helper.buildDownloadFailedNotification(
+                this,
+                R.drawable.download,
+                null,
+                "Download failed. Error code: ${downloads.map { it.failureReason }}"
+            )
             notMetRequirements > 0 -> helper.buildDownloadFailedNotification(
                 this,
                 R.drawable.download,
