@@ -2,8 +2,10 @@ package it.vfsfitvnm.vimusic.ui.views
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -43,6 +45,7 @@ fun PlaylistPreviewItem(
 ) {
     val density = LocalDensity.current
     val (_, _, thumbnailShape) = LocalAppearance.current
+    val interactionSource = remember { MutableInteractionSource() }
 
     val thumbnailSizePx = with(density) {
         thumbnailSize.roundToPx()
@@ -68,6 +71,11 @@ fun PlaylistPreviewItem(
                     modifier = Modifier
                         .clip(thumbnailShape)
                         .fillMaxSize()
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = LocalIndication.current,
+                            onClick = onClick
+                        )
                 )
             } else {
                 Box(
@@ -88,13 +96,17 @@ fun PlaylistPreviewItem(
                                 .fillMaxSize(0.5f)
                                 .clip(thumbnailShape)
                                 .align(alignment)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = LocalIndication.current,
+                                    onClick = onClick
+                                )
                         )
                     }
                 }
             }
         },
-        modifier = modifier,
-        onClick = onClick
+        modifier = modifier
     )
 }
 
@@ -106,6 +118,9 @@ fun BuiltInPlaylistItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val (_, _, thumbnailShape) = LocalAppearance.current
+
     PlaylistItem(
         name = name,
         withGradient = false,
@@ -119,8 +134,13 @@ fun BuiltInPlaylistItem(
                     .size(24.dp)
             )
         },
-        modifier = modifier,
-        onClick = onClick
+        modifier = modifier
+            .clip(thumbnailShape)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = LocalIndication.current,
+                onClick = onClick
+            )
     )
 }
 
@@ -130,19 +150,14 @@ fun PlaylistItem(
     modifier: Modifier = Modifier,
     textColor: Color? = null,
     withGradient: Boolean = true,
-    imageContent: @Composable BoxScope.() -> Unit,
-    onClick: () -> Unit
+    imageContent: @Composable BoxScope.() -> Unit
 ) {
     val (colorPalette, typography, thumbnailShape) = LocalAppearance.current
-
     Box(
         modifier = modifier
             .clip(thumbnailShape)
             .background(colorPalette.background1)
             .aspectRatio(1f)
-            .clickable(
-                onClick = onClick
-            )
     ) {
         Box(
             modifier = Modifier
