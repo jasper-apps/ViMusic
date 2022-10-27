@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -106,6 +107,8 @@ fun BuiltInPlaylistItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val (_, _, thumbnailShape) = LocalAppearance.current
+
     PlaylistItem(
         name = name,
         withGradient = false,
@@ -119,7 +122,8 @@ fun BuiltInPlaylistItem(
                     .size(24.dp)
             )
         },
-        modifier = modifier,
+        modifier = modifier
+            .clip(thumbnailShape),
         onClick = onClick
     )
 }
@@ -134,6 +138,7 @@ fun PlaylistItem(
     onClick: () -> Unit
 ) {
     val (colorPalette, typography, thumbnailShape) = LocalAppearance.current
+    val interactionSource = remember { MutableInteractionSource() }
 
     Box(
         modifier = modifier
@@ -141,6 +146,8 @@ fun PlaylistItem(
             .background(colorPalette.background1)
             .aspectRatio(1f)
             .clickable(
+                interactionSource = interactionSource,
+                indication = null,
                 onClick = onClick
             )
     ) {
