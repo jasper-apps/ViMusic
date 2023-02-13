@@ -15,8 +15,8 @@ android {
         applicationId = "it.vfsfitvnm.vimusic"
         minSdk = 21
         targetSdk = 32
-        versionCode = 24
-        versionName = "0.4.12"
+        versionCode = 25
+        versionName = "0.4.13"
     }
 
     splits {
