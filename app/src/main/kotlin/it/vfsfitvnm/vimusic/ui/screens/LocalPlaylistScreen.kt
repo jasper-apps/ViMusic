@@ -142,6 +142,9 @@ fun LocalPlaylistScreen(playlistId: Long) {
                             modifier = Modifier
                                 .background(colorPalette.background0)
                                 .padding(top = 16.dp)
+                                .clickable(
+                                    enabled = false
+                                ) {  }
                                 .height(52.dp)
                         ) {
                             Image(
@@ -159,6 +162,9 @@ fun LocalPlaylistScreen(playlistId: Long) {
                             modifier = Modifier
                                 .background(colorPalette.background0)
                                 .fillMaxWidth()
+                                .clickable(
+                                    enabled = false
+                                ) {  }
                                 .padding(top = 8.dp, bottom = 8.dp)
                                 .padding(horizontal = 16.dp)
                         ) {
@@ -179,6 +185,9 @@ fun LocalPlaylistScreen(playlistId: Long) {
                             modifier = Modifier
                                 .background(colorPalette.background0)
                                 .fillMaxWidth()
+                                .clickable(
+                                    enabled = false
+                                ) {  }
                                 .zIndex(1f)
                                 .padding(horizontal = 8.dp, vertical = 8.dp)
                         ) {
